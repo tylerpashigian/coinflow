@@ -1,18 +1,27 @@
 import { Button } from "@workspace/ui/components/button"
+import { Text } from "@workspace/ui/components/text"
+import { UserInfo } from "./features/user/user-info"
 
 export function App() {
   return (
     <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
+      <div className="flex max-w-md min-w-0 flex-col gap-4">
         <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
+          <Text as="h1" variant="subheading">
+            Project ready!
+          </Text>
+          <Text>You may now add components and start building.</Text>
+          <Text>We&apos;ve already added the button component for you.</Text>
           <Button className="mt-2">Button</Button>
         </div>
-        <div className="text-muted-foreground font-mono text-xs">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
+        <UserInfo />
+        <Text variant="caption" tone="muted" className="font-mono">
+          (Press{" "}
+          <Text as="kbd" variant="caption">
+            d
+          </Text>{" "}
+          to toggle dark mode)
+        </Text>
       </div>
     </div>
   )

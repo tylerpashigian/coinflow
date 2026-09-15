@@ -39,8 +39,7 @@
   },
   "exports": {
     "./globals.css": "./src/styles/globals.css",
-    "./lib/*": "./src/lib/*.ts",
-    "./components/*": "./src/components/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts"
+    "./components/button": "./src/components/button.tsx",
+    "./components/text": "./src/components/text.tsx"
   }
 }
