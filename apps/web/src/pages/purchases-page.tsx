@@ -1,8 +1,14 @@
+import { useState } from "react"
 import {
   DataTable,
   type DataTableProps,
 } from "@workspace/ui/components/data-table"
+import {
+  DateRangePicker,
+  type DateRange,
+} from "@workspace/ui/components/date-range-picker"
 import { Badge } from "@workspace/ui/components/badge"
+import { FormField } from "@workspace/ui/components/field"
 import { Text } from "@workspace/ui/components/text"
 import { PaymentDetails } from "@/components/payment-details"
 import { PageFeedback } from "@/components/page-feedback"
@@ -10,6 +16,7 @@ import { ResponsiveDetailDrawer } from "@/components/responsive-detail-drawer"
 import type { Payment } from "@/data/models/payment"
 import { usePayments } from "@/hooks/use-payments"
 import { useStablePending } from "@/hooks/use-stable-pending"
+import { filterByDateRange } from "@/lib/filter-by-date-range"
 import { formatCurrency, formatShortDate } from "@/lib/format"
 
 const columns: DataTableProps<Payment>["columns"] = [
@@ -79,6 +86,7 @@ export function PurchasesPage({
   selectedPayment,
 }: PurchasesPageProps) {
   const payments = usePayments()
+  const [dateRange, setDateRange] = useState<DateRange>()
   const showPending = useStablePending(payments.status === "loading")
 
   if (payments.status === "loading" || (payments.status === "ready" && showPending))
@@ -88,6 +96,11 @@ export function PurchasesPage({
   if (payments.status === "error")
     return <PageFeedback message="Unable to load purchases." status="error" />
 
+  const filteredPayments = filterByDateRange(payments.data, dateRange)
+  const latestPaymentDate = new Date(
+    Math.max(...payments.data.map((payment) => Date.parse(payment.createdAt)))
+  )
+
   return (
     <section className="p-5 md:p-9">
       <div className="mb-8">
@@ -96,10 +109,17 @@ export function PurchasesPage({
         </Text>
         <Text tone="muted">Review payments and processing outcomes.</Text>
       </div>
+      <FormField className="mb-4" label="Purchase date range">
+        <DateRangePicker
+          defaultMonth={latestPaymentDate}
+          onValueChange={setDateRange}
+          value={dateRange}
+        />
+      </FormField>
       <DataTable
         ariaLabel="Purchases"
         columns={columns}
-        data={payments.data}
+        data={filteredPayments}
         getRowId={(payment) => payment.id}
         initialSorting={[{ id: "createdAt", desc: true }]}
         onRowClick={onSelectPayment}

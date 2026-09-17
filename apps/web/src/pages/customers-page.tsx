@@ -1,8 +1,14 @@
+import { useState } from "react"
 import {
   DataTable,
   type DataTableProps,
 } from "@workspace/ui/components/data-table"
+import {
+  DateRangePicker,
+  type DateRange,
+} from "@workspace/ui/components/date-range-picker"
 import { Badge } from "@workspace/ui/components/badge"
+import { FormField } from "@workspace/ui/components/field"
 import { Text } from "@workspace/ui/components/text"
 import { CustomerDetails } from "@/components/customer-details"
 import { PageFeedback } from "@/components/page-feedback"
@@ -10,6 +16,7 @@ import { ResponsiveDetailDrawer } from "@/components/responsive-detail-drawer"
 import type { Customer } from "@/data/models/customer"
 import { useCustomers } from "@/hooks/use-customers"
 import { useStablePending } from "@/hooks/use-stable-pending"
+import { filterByDateRange } from "@/lib/filter-by-date-range"
 import { formatShortDate } from "@/lib/format"
 
 const columns: DataTableProps<Customer>["columns"] = [
@@ -82,6 +89,7 @@ export function CustomersPage({
   selectedCustomer,
 }: CustomersPageProps) {
   const customers = useCustomers()
+  const [dateRange, setDateRange] = useState<DateRange>()
   const showPending = useStablePending(customers.status === "loading")
 
   if (customers.status === "loading" || (customers.status === "ready" && showPending))
@@ -90,6 +98,11 @@ export function CustomersPage({
     ) : null
   if (customers.status === "error")
     return <PageFeedback message="Unable to load customers." status="error" />
+
+  const filteredCustomers = filterByDateRange(customers.data, dateRange)
+  const latestCustomerDate = new Date(
+    Math.max(...customers.data.map((customer) => Date.parse(customer.createdAt)))
+  )
 
   return (
     <section className="p-5 md:p-9">
@@ -101,10 +114,17 @@ export function CustomersPage({
           Review customer records, activity, and saved methods.
         </Text>
       </div>
+      <FormField className="mb-4" label="Customer date range">
+        <DateRangePicker
+          defaultMonth={latestCustomerDate}
+          onValueChange={setDateRange}
+          value={dateRange}
+        />
+      </FormField>
       <DataTable
         ariaLabel="Customers"
         columns={columns}
-        data={customers.data}
+        data={filteredCustomers}
         getRowId={(customer) => customer.id}
         initialSorting={[{ id: "createdAt", desc: true }]}
         onRowClick={onSelectCustomer}

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { http, HttpResponse } from "msw"
 import { describe, expect, it } from "vitest"
 import { App } from "./App"
@@ -16,7 +16,7 @@ describe("admin overview", () => {
     expect(
       screen.getByRole("combobox", { name: "Merchant ID" })
     ).toHaveTextContent("Coinflow Admin")
-    expect(screen.getByPlaceholderText("Search")).toBeVisible()
+    expect(screen.getByRole("searchbox", { name: "Search" })).toBeVisible()
     expect(screen.getByText("⌘ K")).toBeVisible()
     expect(screen.getByRole("link", { name: "Purchases" })).toHaveAttribute(
       "href",
@@ -49,6 +49,101 @@ describe("admin overview", () => {
     fireEvent.keyDown(document, { ctrlKey: true, key: "k" })
 
     expect(search).toHaveFocus()
+  })
+
+  it("provides the desktop sidebar content in an accessible mobile navigation drawer", async () => {
+    render(<App />)
+
+    await screen.findByRole("heading", { name: "Overview" })
+    const menuTrigger = screen.getByRole("button", { name: "Open navigation" })
+    expect(menuTrigger.closest("header")).toHaveClass("lg:hidden")
+    expect(screen.getByText("Coinflow").closest("aside")).toHaveClass(
+      "hidden",
+      "lg:flex"
+    )
+
+    fireEvent.click(menuTrigger)
+    const drawer = await screen.findByRole("dialog", { name: "Navigation" })
+
+    expect(
+      within(drawer).getByRole("combobox", { name: "Merchant ID" })
+    ).toHaveTextContent("Coinflow Admin")
+    expect(within(drawer).getByRole("searchbox", { name: "Search" })).toBeVisible()
+    expect(within(drawer).getByRole("link", { name: "Home" })).toHaveAttribute(
+      "aria-current",
+      "page"
+    )
+    expect(within(drawer).getByText("Logged in as")).toBeVisible()
+
+    fireEvent.keyDown(document, { key: "Escape" })
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog", { name: "Navigation" })).toBeNull()
+    )
+    expect(menuTrigger).toHaveFocus()
+
+    fireEvent.click(menuTrigger)
+    const reopenedDrawer = await screen.findByRole("dialog", {
+      name: "Navigation",
+    })
+    fireEvent.click(within(reopenedDrawer).getByRole("link", { name: "Purchases" }))
+
+    expect(
+      await screen.findByRole("heading", { name: "Purchases" })
+    ).toBeVisible()
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog", { name: "Navigation" })).toBeNull()
+    )
+    expect(menuTrigger).toHaveFocus()
+
+    fireEvent.click(menuTrigger)
+    const homeDrawer = await screen.findByRole("dialog", { name: "Navigation" })
+    fireEvent.click(within(homeDrawer).getByRole("link", { name: "Home" }))
+    expect(
+      await screen.findByRole("heading", { name: "Overview" })
+    ).toBeVisible()
+  })
+
+  it("closes mobile navigation when the viewport reaches the desktop breakpoint", async () => {
+    const originalMatchMedia = Object.getOwnPropertyDescriptor(window, "matchMedia")
+    const listeners = new Set<(event: MediaQueryListEvent) => void>()
+    const mediaQuery = {
+      addEventListener: (_event: string, listener: (event: MediaQueryListEvent) => void) =>
+        listeners.add(listener),
+      matches: true,
+      removeEventListener: (_event: string, listener: (event: MediaQueryListEvent) => void) =>
+        listeners.delete(listener),
+    } as unknown as MediaQueryList
+
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      value: () => mediaQuery,
+    })
+
+    try {
+      render(<App />)
+      await screen.findByRole("heading", { name: "Overview" })
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }))
+      expect(
+        await screen.findByRole("dialog", { name: "Navigation" })
+      ).toBeVisible()
+
+      act(() => {
+        ;(mediaQuery as unknown as { matches: boolean }).matches = false
+        listeners.forEach((listener) =>
+          listener({ matches: false } as MediaQueryListEvent)
+        )
+      })
+
+      await waitFor(() =>
+        expect(screen.queryByRole("dialog", { name: "Navigation" })).toBeNull()
+      )
+    } finally {
+      if (originalMatchMedia) {
+        Object.defineProperty(window, "matchMedia", originalMatchMedia)
+      } else {
+        delete (window as { matchMedia?: typeof window.matchMedia }).matchMedia
+      }
+    }
   })
 
   it("switches chart metrics and requests a different timezone", async () => {
@@ -111,6 +206,13 @@ describe("admin overview", () => {
     expect(
       await screen.findByRole("heading", { name: "Purchases" })
     ).toBeVisible()
+    const purchasesDateFilter = screen.getByRole("button", {
+      name: "Purchase date range",
+    })
+    expect(purchasesDateFilter).toBeVisible()
+    fireEvent.click(purchasesDateFilter)
+    expect(await screen.findAllByRole("grid")).toHaveLength(2)
+    fireEvent.keyDown(document, { key: "Escape" })
     expect(screen.getByRole("link", { name: "Purchases" })).toHaveAttribute(
       "aria-current",
       "page"
@@ -131,6 +233,9 @@ describe("admin overview", () => {
     fireEvent.click(await screen.findByRole("link", { name: "Customers" }))
     expect(
       await screen.findByRole("heading", { name: "Customers" })
+    ).toBeVisible()
+    expect(
+      screen.getByRole("button", { name: "Customer date range" })
     ).toBeVisible()
     fireEvent.click(await screen.findByText("Nova Bennett"))
     expect(await screen.findByText("Customer details")).toBeVisible()

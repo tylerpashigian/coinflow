@@ -3,6 +3,7 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "cn"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { UnfoldMoreIcon, Tick02Icon, ArrowUp01Icon, ArrowDown01Icon } from "@hugeicons/core-free-icons"
+import { useFormFieldContext } from "./field-context"
 
 const Select = SelectPrimitive.Root
 
@@ -30,12 +31,25 @@ function SelectTrigger({
   className,
   size = "default",
   children,
+  id,
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
   ...props
 }: SelectPrimitive.Trigger.Props & {
   size?: "sm" | "default"
 }) {
+  const field = useFormFieldContext()
+  const hasExplicitName = ariaLabel !== undefined || ariaLabelledBy !== undefined
+
   return (
     <SelectPrimitive.Trigger
+      id={id ?? field?.controlId}
+      aria-describedby={ariaDescribedBy ?? field?.describedBy}
+      aria-invalid={ariaInvalid ?? (field?.invalid || undefined)}
+      aria-label={ariaLabel}
+      aria-labelledby={hasExplicitName ? ariaLabelledBy : field?.labelledBy}
       data-slot="select-trigger"
       data-size={size}
       className={cn(
