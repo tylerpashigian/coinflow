@@ -17,5 +17,5 @@ export function formatShortDate(date: string) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
-  }).format(new Date(`${date}T12:00:00Z`))
+  }).format(new Date(date.includes("T") ? date : `${date}T12:00:00Z`))
 }

@@ -5,7 +5,9 @@ import { Card } from "@workspace/ui/components/card"
 import { LineChart } from "@workspace/ui/components/line-chart"
 import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
 import { Text } from "@workspace/ui/components/text"
+import { PageFeedback } from "@/components/page-feedback"
 import { useDashboardOverview } from "@/hooks/use-dashboard-overview"
+import { useStablePending } from "@/hooks/use-stable-pending"
 import type {
   DashboardMetric,
   DashboardTimezone,
@@ -30,15 +32,14 @@ export function DashboardPage() {
     metric,
     timezone,
   })
+  const showPending = useStablePending(overview.status === "loading")
 
-  if (overview.status === "loading")
-    return <Text role="status">Loading dashboard overview…</Text>
+  if (overview.status === "loading" || (overview.status === "ready" && showPending))
+    return showPending ? (
+      <PageFeedback message="Loading dashboard overview…" status="loading" />
+    ) : null
   if (overview.status === "error")
-    return (
-      <Text role="alert" tone="danger">
-        Unable to load dashboard overview.
-      </Text>
-    )
+    return <PageFeedback message="Unable to load dashboard overview." status="error" />
 
   const data = overview.data
   const chartPoints = (series: typeof data.paymentSeries) =>
@@ -113,7 +114,7 @@ export function DashboardPage() {
       </div>
       <div className="mt-5 grid gap-5 xl:grid-cols-2">
         <TrendCard
-          color="#2563eb"
+          color="var(--chart-1)"
           data={chartPoints(data.paymentSeries)}
           metric={metric}
           onMetricChange={setMetric}
@@ -125,7 +126,7 @@ export function DashboardPage() {
           )}
         />
         <TrendCard
-          color="#7c3aed"
+          color="var(--chart-2)"
           data={chartPoints(data.payoutSeries)}
           metric={metric}
           onMetricChange={setMetric}

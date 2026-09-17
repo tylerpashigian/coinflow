@@ -1,10 +1,6 @@
-import { AppShell } from "./components/app-shell"
-import { DashboardPage } from "./pages/dashboard-page"
+import { RouterProvider } from "@tanstack/react-router"
+import { router } from "./router"
 
 export function App() {
-  return (
-    <AppShell>
-      <DashboardPage />
-    </AppShell>
-  )
+  return <RouterProvider router={router} />
 }

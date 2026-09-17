@@ -1,6 +1,7 @@
 import { type ReactNode, useRef } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useHotkey } from "@tanstack/react-hotkeys"
+import { Link } from "@tanstack/react-router"
 import {
   Analytics01Icon,
   ChartLineData01Icon,
@@ -23,10 +24,15 @@ import { Text } from "@workspace/ui/components/text"
 import { useUser } from "@/hooks/use-user"
 
 const navigation = [
-  { label: "Home", icon: Home01Icon, active: true },
+  { label: "Home", icon: Home01Icon, to: "/" },
   { label: "Liquidity", icon: Wallet01Icon },
-  { label: "Purchases", icon: CreditCardIcon, section: "Payments & payouts" },
-  { label: "Customers", icon: UserGroupIcon },
+  {
+    label: "Purchases",
+    icon: CreditCardIcon,
+    section: "Payments & payouts",
+    to: "/purchases",
+  },
+  { label: "Customers", icon: UserGroupIcon, to: "/customers" },
   { label: "Chargebacks", icon: Analytics01Icon },
   { label: "Chargeback analytics", icon: ChartLineData01Icon },
   { label: "Compliance center", icon: Analytics01Icon },
@@ -43,10 +49,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   })
 
   return (
-    <div className="min-h-svh bg-[#f7f8fb] text-slate-950 dark:bg-background dark:text-foreground">
-      <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-slate-200 bg-white px-4 py-6 lg:flex lg:flex-col dark:border-border dark:bg-card">
+    <div className="min-h-svh bg-muted/30 text-foreground dark:bg-background dark:text-foreground">
+      <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-border bg-white px-4 py-6 lg:flex lg:flex-col dark:bg-card">
         <div className="flex items-center gap-2 px-3">
-          <div className="grid size-8 place-items-center rounded-lg bg-slate-950 text-sm font-bold text-white">
+          <div className="grid size-8 place-items-center rounded-lg bg-foreground text-sm font-bold text-white">
             C
           </div>
           <Text as="span" size="lg" weight="semibold">
@@ -79,14 +85,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
         <label className="mt-3 block" htmlFor="global-search">
           <Input
-            className="h-10 bg-white px-3 text-sm placeholder:text-slate-400 dark:bg-input/30"
+            className="h-10 bg-white px-3 text-sm placeholder:text-muted-foreground dark:bg-input/30"
             id="global-search"
             leftComponent={
-              <HugeiconsIcon
-                icon={Search01Icon}
-                size={17}
-                strokeWidth={2}
-              />
+              <HugeiconsIcon icon={Search01Icon} size={17} strokeWidth={2} />
             }
             placeholder="Search"
             ref={searchRef}
@@ -107,21 +109,36 @@ export function AppShell({ children }: { children: ReactNode }) {
                   {item.section}
                 </Text>
               ) : null}
-              <button
-                aria-current={item.active ? "page" : undefined}
-                aria-disabled={!item.active}
-                className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm ${item.active ? "bg-slate-100 font-semibold text-slate-950 dark:bg-accent dark:text-accent-foreground" : "cursor-not-allowed text-slate-400"}`}
-                disabled={!item.active}
-                type="button"
-              >
-                <HugeiconsIcon icon={item.icon} size={17} strokeWidth={1.8} />
-                {item.label}
-              </button>
+              {item.to ? (
+                <Link
+                  to={item.to}
+                  activeProps={{
+                    "aria-current": "page",
+                    className:
+                      "bg-accent font-semibold text-foreground dark:text-accent-foreground",
+                  }}
+                  activeOptions={{ exact: item.to === "/" }}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+                >
+                  <HugeiconsIcon icon={item.icon} size={17} strokeWidth={1.8} />
+                  {item.label}
+                </Link>
+              ) : (
+                <button
+                  aria-disabled="true"
+                  className="flex w-full cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground"
+                  disabled
+                  type="button"
+                >
+                  <HugeiconsIcon icon={item.icon} size={17} strokeWidth={1.8} />
+                  {item.label}
+                </button>
+              )}
             </div>
           ))}
         </nav>
-        <div className="mt-auto flex items-center gap-3 border-t border-slate-100 px-3 pt-5 dark:border-border">
-          <div className="grid size-8 place-items-center rounded-full bg-violet-100 text-sm font-semibold text-violet-700">
+        <div className="mt-auto flex items-center gap-3 border-t border-border px-3 pt-5 dark:border-border">
+          <div className="grid size-8 place-items-center rounded-full bg-muted-foreground text-sm font-semibold text-muted">
             {user.status === "ready" ? user.user.name.slice(0, 1) : "B"}
           </div>
           <div className="min-w-0">

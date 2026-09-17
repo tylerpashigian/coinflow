@@ -18,7 +18,10 @@ describe("admin overview", () => {
     ).toHaveTextContent("Coinflow Admin")
     expect(screen.getByPlaceholderText("Search")).toBeVisible()
     expect(screen.getByText("⌘ K")).toBeVisible()
-    expect(screen.getByRole("button", { name: "Purchases" })).toBeDisabled()
+    expect(screen.getByRole("link", { name: "Purchases" })).toHaveAttribute(
+      "href",
+      "/purchases"
+    )
     expect(
       screen.getByRole("img", { name: "Payments amount trend" })
     ).toBeVisible()
@@ -99,5 +102,40 @@ describe("admin overview", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Unable to load dashboard overview."
     )
+  })
+
+  it("navigates to operations tables and opens their selected-record drawers", async () => {
+    render(<App />)
+
+    fireEvent.click(await screen.findByRole("link", { name: "Purchases" }))
+    expect(
+      await screen.findByRole("heading", { name: "Purchases" })
+    ).toBeVisible()
+    expect(screen.getByRole("link", { name: "Purchases" })).toHaveAttribute(
+      "aria-current",
+      "page"
+    )
+    const purchaseRows = await screen.findAllByRole("row")
+    expect(purchaseRows[1]).toHaveTextContent("pay_8X4P")
+    fireEvent.click(screen.getByRole("button", { name: /Date/ }))
+    await waitFor(() =>
+      expect(screen.getAllByRole("row")[1]).toHaveTextContent("pay_5C9K")
+    )
+    fireEvent.click(await screen.findByText("pay_8X4P"))
+    expect(await screen.findByText("Payment details")).toBeVisible()
+    expect(await screen.findByText("Visa •••• 4242")).toBeVisible()
+    expect(window.location.pathname).toBe("/purchases/pay_8X4P")
+
+    fireEvent.keyDown(document, { key: "Escape" })
+    await waitFor(() => expect(window.location.pathname).toBe("/purchases"))
+    fireEvent.click(await screen.findByRole("link", { name: "Customers" }))
+    expect(
+      await screen.findByRole("heading", { name: "Customers" })
+    ).toBeVisible()
+    fireEvent.click(await screen.findByText("Nova Bennett"))
+    expect(await screen.findByText("Customer details")).toBeVisible()
+    expect(window.location.pathname).toBe("/customers/cus_nova")
+    fireEvent.click(screen.getByRole("tab", { name: "Methods" }))
+    expect(await screen.findByText("Visa •••• 4242")).toBeVisible()
   })
 })
