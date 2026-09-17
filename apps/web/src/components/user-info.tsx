@@ -1,5 +1,5 @@
 import { Text } from "@workspace/ui/components/text"
-import { useUser } from "@/data/hooks/use-user"
+import { useUser } from "@/hooks/use-user"
 
 export function UserInfo() {
   const state = useUser()

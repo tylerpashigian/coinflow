@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import type { User } from "@/features/user/user"
+import type { User } from "@/data/models/user"
 import { getUser } from "@/services/user-service"
 
 export type UserQueryState =

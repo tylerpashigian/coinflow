@@ -1,4 +1,4 @@
-import type { User } from "@/features/user/user"
+import type { User } from "@/data/models/user"
 
 /**
  * The boundary between application code and the user API.

@@ -14,6 +14,7 @@
     "@fontsource-variable/geist": "^5.3.0",
     "@hugeicons/core-free-icons": "^4.3.2",
     "@hugeicons/react": "^1.1.10",
+    "@tanstack/charts": "0.18.0",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.2.6",
     "react": "^19.2.6",
@@ -40,6 +41,12 @@
   "exports": {
     "./globals.css": "./src/styles/globals.css",
     "./components/button": "./src/components/button.tsx",
+    "./components/card": "./src/components/card.tsx",
+    "./components/input": "./src/components/input.tsx",
+    "./components/kbd": "./src/components/kbd.tsx",
+    "./components/line-chart": "./src/components/line-chart.tsx",
+    "./components/select": "./src/components/select.tsx",
+    "./components/tabs": "./src/components/tabs.tsx",
     "./components/text": "./src/components/text.tsx"
   }
 }

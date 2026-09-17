@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker"
-import type { User } from "../../features/user/user"
+import type { User } from "@/data/models/user"
 
 /** Immutable builder shared by demo handlers and tests. */
 export function userBuilder(overrides: Partial<User> = {}) {

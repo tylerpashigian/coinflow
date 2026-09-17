@@ -1,6 +1,6 @@
 # Coinflow assessment
 
-React + Vite app with a shared design system and a mocked user endpoint.
+React + Vite app with a shared design system and a mocked Coinflow admin overview.
 
 ## Getting started
 
@@ -11,7 +11,7 @@ pnpm install
 pnpm dev
 ```
 
-The boilerplate displays a generated fictional user after fetching `GET /api/user`.
+The dashboard displays deterministic fictional data from MSW before a real API is available.
 MSW starts before React renders in development.
 Press `d` to toggle the existing theme.
 
@@ -30,7 +30,10 @@ Ordinary production builds exclude the mock imports and require a real `/api/use
 
 - `packages/ui` owns shadcn/Base UI, components, typography, fonts, and theme CSS.
   Only explicitly exported components and `globals.css` are public.
-- `apps/web` owns application behavior, domain types, API services, data hooks, MSW handlers, and builders.
+- `apps/web` owns application behavior. `pages` compose routes, `components` hold
+  reusable app UI, `hooks` own UI-facing state, `data/models` holds client models,
+  `data/mocks` holds MSW handlers/fixtures/builders, and `services` owns API
+  boundaries.
   ESLint rejects direct underlying UI-library imports and design-system internals.
 - App layout can use Tailwind; typography uses the shared `Text` component.
 
@@ -52,18 +55,19 @@ weight defaults, independently overridable with typed tokens. Styling does not
 choose heading semantics. Compile-time regression cases live in
 `packages/ui/src/text.typecheck.tsx`.
 
-## Mock user contract
+## Mock API contracts
 
-`GET /api/user` returns `{ id: string, name: string, email: string }`. This is a
-frontend demo assumption, not Coinflow's API. `services/user-service.ts` owns the
-API integration and response validation; `data/hooks/use-user.ts` owns the
-UI-facing loading and error state. The hook is the migration point for caching or
-TanStack Query, so components stay independent of either implementation detail.
+`GET /api/user` returns the signed-in user. `GET /api/dashboard/overview` accepts
+`from`, `to`, and `timezone` and returns KPI summaries plus payment/payout series.
+Payment and customer list/detail contracts are also mocked at `/api/payments`,
+`/api/payments/:id`, `/api/customers`, and `/api/customers/:id` for the next slice.
 
-`userBuilder().with({ name: "Jordan Lee" }).build()` creates deterministic data
-without mutating existing builders. Browser and integration tests share handlers;
-tests override responses per scenario and reset them afterward. The tests cover
-Strict Mode loading, custom server data, and request failure.
+Services own API integration and response validation; hooks own UI-facing loading
+and error state. This is a frontend demo contract, not Coinflow's production API.
+
+Default MSW fixtures are curated and deterministic for reproducible screenshots
+and tests. `userBuilder().with({ name: "Jordan Lee" }).build()` remains available
+for isolated test scenarios without mutating existing builders.
 
 To add shadcn components, use the existing monorepo configuration and explicitly
 export new shared components from `packages/ui/package.json`.
