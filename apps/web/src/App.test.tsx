@@ -4,6 +4,31 @@ import { describe, expect, it } from "vitest"
 import { App } from "./App"
 import { server } from "./test/setup"
 
+function mockDesktopDatePickerViewport() {
+  const originalMatchMedia = Object.getOwnPropertyDescriptor(
+    window,
+    "matchMedia"
+  )
+
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    value: (query: string) =>
+      ({
+        addEventListener: () => undefined,
+        matches: query === "(min-width: 768px)",
+        removeEventListener: () => undefined,
+      }) as unknown as MediaQueryList,
+  })
+
+  return () => {
+    if (originalMatchMedia) {
+      Object.defineProperty(window, "matchMedia", originalMatchMedia)
+    } else {
+      delete (window as { matchMedia?: typeof window.matchMedia }).matchMedia
+    }
+  }
+}
+
 describe("admin overview", () => {
   it("renders the dashboard from its mocked overview contract", async () => {
     render(<App />)
@@ -105,18 +130,27 @@ describe("admin overview", () => {
 
   it("closes mobile navigation when the viewport reaches the desktop breakpoint", async () => {
     const originalMatchMedia = Object.getOwnPropertyDescriptor(window, "matchMedia")
-    const listeners = new Set<(event: MediaQueryListEvent) => void>()
-    const mediaQuery = {
-      addEventListener: (_event: string, listener: (event: MediaQueryListEvent) => void) =>
-        listeners.add(listener),
-      matches: true,
-      removeEventListener: (_event: string, listener: (event: MediaQueryListEvent) => void) =>
-        listeners.delete(listener),
-    } as unknown as MediaQueryList
+    const listeners = new Map<string, Set<(event: MediaQueryListEvent) => void>>()
+    const matches = new Map([
+      ["(max-width: 1023px)", true],
+      ["(min-width: 1024px)", false],
+    ])
 
     Object.defineProperty(window, "matchMedia", {
       configurable: true,
-      value: () => mediaQuery,
+      value: (query: string) => ({
+        addEventListener: (_event: string, listener: (event: MediaQueryListEvent) => void) => {
+          const queryListeners = listeners.get(query) ?? new Set()
+          queryListeners.add(listener)
+          listeners.set(query, queryListeners)
+        },
+        get matches() {
+          return matches.get(query) ?? false
+        },
+        media: query,
+        removeEventListener: (_event: string, listener: (event: MediaQueryListEvent) => void) =>
+          listeners.get(query)?.delete(listener),
+      }) as MediaQueryList,
     })
 
     try {
@@ -128,10 +162,14 @@ describe("admin overview", () => {
       ).toBeVisible()
 
       act(() => {
-        ;(mediaQuery as unknown as { matches: boolean }).matches = false
-        listeners.forEach((listener) =>
-          listener({ matches: false } as MediaQueryListEvent)
-        )
+        matches.set("(max-width: 1023px)", false)
+        matches.set("(min-width: 1024px)", true)
+        listeners.forEach((queryListeners, query) => {
+          const queryMatches = matches.get(query) ?? false
+          queryListeners.forEach((listener) =>
+            listener({ matches: queryMatches, media: query } as MediaQueryListEvent)
+          )
+        })
       })
 
       await waitFor(() =>
@@ -150,9 +188,13 @@ describe("admin overview", () => {
     const queries: string[] = []
     server.use(
       http.get("/api/dashboard/overview", ({ request }) => {
-        queries.push(new URL(request.url).search)
+        const url = new URL(request.url)
+        queries.push(url.search)
         return HttpResponse.json({
-          rangeLabel: "Aug 24 – Aug 30, 2026",
+          rangeLabel:
+            url.searchParams.get("from") === "2026-08-17"
+              ? "Aug 17 – Aug 23, 2026"
+              : "Aug 24 – Aug 30, 2026",
           summaries: {
             payments: 100_00,
             paymentCount: 10,
@@ -175,9 +217,10 @@ describe("admin overview", () => {
       )
     )
     fireEvent.click(screen.getAllByRole("tab", { name: "Count" })[0])
-    fireEvent.change(screen.getByRole("combobox", { name: "Date range" }), {
-      target: { value: "previous" },
-    })
+    fireEvent.click(screen.getByRole("combobox", { name: "Date range" }))
+    fireEvent.click(
+      await screen.findByRole("option", { name: "Aug 17 – Aug 23, 2026" })
+    )
 
     expect(
       await screen.findByRole("img", { name: "Payments count trend" })
@@ -200,47 +243,53 @@ describe("admin overview", () => {
   })
 
   it("navigates to operations tables and opens their selected-record drawers", async () => {
-    render(<App />)
+    const restoreMatchMedia = mockDesktopDatePickerViewport()
 
-    fireEvent.click(await screen.findByRole("link", { name: "Purchases" }))
-    expect(
-      await screen.findByRole("heading", { name: "Purchases" })
-    ).toBeVisible()
-    const purchasesDateFilter = screen.getByRole("button", {
-      name: "Purchase date range",
-    })
-    expect(purchasesDateFilter).toBeVisible()
-    fireEvent.click(purchasesDateFilter)
-    expect(await screen.findAllByRole("grid")).toHaveLength(2)
-    fireEvent.keyDown(document, { key: "Escape" })
-    expect(screen.getByRole("link", { name: "Purchases" })).toHaveAttribute(
-      "aria-current",
-      "page"
-    )
-    const purchaseRows = await screen.findAllByRole("row")
-    expect(purchaseRows[1]).toHaveTextContent("pay_8X4P")
-    fireEvent.click(screen.getByRole("button", { name: /Date/ }))
-    await waitFor(() =>
-      expect(screen.getAllByRole("row")[1]).toHaveTextContent("pay_5C9K")
-    )
-    fireEvent.click(await screen.findByText("pay_8X4P"))
-    expect(await screen.findByText("Payment details")).toBeVisible()
-    expect(await screen.findByText("Visa •••• 4242")).toBeVisible()
-    expect(window.location.pathname).toBe("/purchases/pay_8X4P")
+    try {
+      render(<App />)
 
-    fireEvent.keyDown(document, { key: "Escape" })
-    await waitFor(() => expect(window.location.pathname).toBe("/purchases"))
-    fireEvent.click(await screen.findByRole("link", { name: "Customers" }))
-    expect(
-      await screen.findByRole("heading", { name: "Customers" })
-    ).toBeVisible()
-    expect(
-      screen.getByRole("button", { name: "Customer date range" })
-    ).toBeVisible()
-    fireEvent.click(await screen.findByText("Nova Bennett"))
-    expect(await screen.findByText("Customer details")).toBeVisible()
-    expect(window.location.pathname).toBe("/customers/cus_nova")
-    fireEvent.click(screen.getByRole("tab", { name: "Methods" }))
-    expect(await screen.findByText("Visa •••• 4242")).toBeVisible()
+      fireEvent.click(await screen.findByRole("link", { name: "Purchases" }))
+      expect(
+        await screen.findByRole("heading", { name: "Purchases" })
+      ).toBeVisible()
+      const purchasesDateFilter = screen.getByRole("button", {
+        name: "Purchase date range",
+      })
+      expect(purchasesDateFilter).toBeVisible()
+      fireEvent.click(purchasesDateFilter)
+      expect(await screen.findAllByRole("grid")).toHaveLength(2)
+      fireEvent.keyDown(document, { key: "Escape" })
+      expect(screen.getByRole("link", { name: "Purchases" })).toHaveAttribute(
+        "aria-current",
+        "page"
+      )
+      const purchaseRows = await screen.findAllByRole("row")
+      expect(purchaseRows[1]).toHaveTextContent("pay_8X4P")
+      fireEvent.click(screen.getByRole("button", { name: /Date/ }))
+      await waitFor(() =>
+        expect(screen.getAllByRole("row")[1]).toHaveTextContent("pay_5C9K")
+      )
+      fireEvent.click(await screen.findByText("pay_8X4P"))
+      expect(await screen.findByText("Payment details")).toBeVisible()
+      expect(await screen.findByText("Visa •••• 4242")).toBeVisible()
+      expect(window.location.pathname).toBe("/purchases/pay_8X4P")
+
+      fireEvent.keyDown(document, { key: "Escape" })
+      await waitFor(() => expect(window.location.pathname).toBe("/purchases"))
+      fireEvent.click(await screen.findByRole("link", { name: "Customers" }))
+      expect(
+        await screen.findByRole("heading", { name: "Customers" })
+      ).toBeVisible()
+      expect(
+        screen.getByRole("button", { name: "Customer date range" })
+      ).toBeVisible()
+      fireEvent.click(await screen.findByText("Nova Bennett"))
+      expect(await screen.findByText("Customer details")).toBeVisible()
+      expect(window.location.pathname).toBe("/customers/cus_nova")
+      fireEvent.click(screen.getByRole("tab", { name: "Methods" }))
+      expect(await screen.findByText("Visa •••• 4242")).toBeVisible()
+    } finally {
+      restoreMatchMedia()
+    }
   })
 })

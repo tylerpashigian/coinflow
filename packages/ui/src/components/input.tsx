@@ -1,10 +1,11 @@
 import { registerFieldControl } from "../private/field-controls"
-import { useImperativeHandle, useRef } from "react"
+import { useEffect, useImperativeHandle, useRef, useState } from "react"
 import { Input as Primitive } from "@base-ui/react/input"
 import { useFormFieldContext } from "./field-context"
 import { inputVariants } from "./input-variants"
 import { Icon } from "../private/icons"
 import { Kbd } from "./kbd"
+import { Button } from "./button"
 export interface FocusHandle {
   focus(): void
 }
@@ -52,6 +53,16 @@ export function Input({
 }: InputProps) {
   const field = useFormFieldContext()
   const ref = useRef<HTMLInputElement>(null)
+  const [hasSearchValue, setHasSearchValue] = useState(
+    Boolean(value ?? defaultValue)
+  )
+  const showClearButton =
+    type === "search" && hasSearchValue && !disabled && !readOnly
+
+  useEffect(() => {
+    if (value !== undefined) setHasSearchValue(Boolean(value))
+  }, [value])
+
   useImperativeHandle(
     focusHandle,
     () => ({ focus: () => ref.current?.focus() }),
@@ -70,7 +81,10 @@ export function Input({
         disabled={disabled}
         required={required}
         readOnly={readOnly}
-        onChange={(event) => onValueChange?.(event.target.value)}
+        onChange={(event) => {
+          setHasSearchValue(Boolean(event.target.value))
+          onValueChange?.(event.target.value)
+        }}
         aria-describedby={describedBy ?? field?.describedBy}
         aria-invalid={invalid ?? (field?.invalid || undefined)}
         aria-label={label}
@@ -79,7 +93,7 @@ export function Input({
         className={inputVariants({
           size,
           hasLeadingContent: !!leadingIcon,
-          hasTrailingContent: !!shortcut,
+          hasTrailingContent: !!shortcut || showClearButton,
         })}
       />
       {leadingIcon && (
@@ -87,11 +101,27 @@ export function Input({
           <Icon name={leadingIcon} />
         </span>
       )}
-      {shortcut && (
+      {showClearButton ? (
+        <span className="absolute right-1">
+          <Button
+            label="Clear search"
+            icon="close"
+            iconOnly
+            variant="ghost"
+            size="sm"
+            onPress={() => {
+              if (ref.current) ref.current.value = ""
+              setHasSearchValue(false)
+              onValueChange?.("")
+              ref.current?.focus()
+            }}
+          />
+        </span>
+      ) : shortcut ? (
         <span className="pointer-events-none absolute right-2">
           <Kbd>{shortcut}</Kbd>
         </span>
-      )}
+      ) : null}
     </div>
   )
 }

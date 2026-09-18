@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest"
 import { DateRangePicker } from "@workspace/ui/components/date-range-picker"
 import { FormField } from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
-import { Select, SelectTrigger, SelectValue } from "@workspace/ui/components/select"
+import { Select } from "@workspace/ui/components/select"
 
 describe("FormField", () => {
   it("associates supported controls with their labels, feedback, and invalid state", () => {
@@ -13,11 +13,7 @@ describe("FormField", () => {
           <Input />
         </FormField>
         <FormField error="Choose a merchant." label="Merchant">
-          <Select>
-            <SelectTrigger>
-              <SelectValue placeholder="Choose a merchant" />
-            </SelectTrigger>
-          </Select>
+          <Select options={[]} placeholder="Choose a merchant" />
         </FormField>
         <FormField error="Choose a complete range." label="Purchase date range">
           <DateRangePicker onValueChange={() => undefined} value={undefined} />
