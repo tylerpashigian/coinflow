@@ -1,0 +1,133 @@
+{
+  "title": "Choose the Coinflow dashboard visual world",
+  "question": "Choose the world that will guide the redesign across Overview, Purchases, Customers, drawers, and responsive navigation.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "The Settlement Atlas",
+      "kicker": "THE ROLL",
+      "lineage": "a precise cartographer’s field atlas for live financial terrain",
+      "thesis": "A calm operational map where payment flow, record state, and investigation paths become legible coordinates.",
+      "palette": ["#FCFBFF", "#19172B", "#8B7CF6", "#E7E2FF"],
+      "materials": ["fine coordinate rules", "soft-lilac active fields", "high-clarity ledger cards"],
+      "viewport": "Overview opens as a settlement pulse: a single primary trend, three compact totals, and an active range shown as a lavender route through the period.",
+      "risk": "The map vocabulary must stay functional; ornamental cartography would slow a high-frequency operations task.",
+      "raised": [
+        { "from": "Darkroom exposure record", "raise": "Use a disciplined eleven-step tonal ladder so dense records remain readable before color carries any meaning." },
+        { "from": "Sneaker archive wall", "raise": "Make selected records feel materially retrieved through a measured drawer transition, not a generic modal." },
+        { "from": "Film cutting bench", "raise": "Keep a persistent, visible selection trail from table row to drawer so operators never lose their place." }
+      ],
+      "comp": ".impeccable/mocks/decision/settlement-atlas.webp",
+      "hero": "https://impeccable.style/worlds/cards/operate-b-exposure-record-zone-sheets-hero.webp"
+    },
+    {
+      "id": "model-pick",
+      "label": "The Operator’s Field Guide",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "a modern technical field manual for a specialist at work",
+      "thesis": "Every screen reads like a high-confidence field guide: decisive headings, clean evidence blocks, and one unmistakable active state.",
+      "palette": ["#FFFFFF", "#171722", "#7667E8", "#F0EDFF"],
+      "materials": ["manual-grade typography", "structured white surfaces", "lilac signal marks"],
+      "viewport": "Overview presents a concise command header, a primary settlement figure, and a single investigation-ready trend with the date range treated as a live instrument.",
+      "risk": "It is the most familiar choice; it must earn distinction through exceptional information rhythm rather than ornament.",
+      "comp": ".impeccable/mocks/decision/operators-field-guide.webp"
+    },
+    {
+      "id": "challenger-darkroom",
+      "label": "The Exposure Ledger",
+      "verdict": "competitive",
+      "lineage": "a darkroom printer’s exposure record translated into a payment-risk workspace",
+      "thesis": "Tonal zones and precise marks make payment risk, record density, and selection depth visible without turning every signal into a color.",
+      "palette": ["#FBFAF7", "#202124", "#9D7BFF", "#BFC3C8"],
+      "materials": ["zone-scale neutrals", "fine hatch for load", "one filtered violet signal"],
+      "viewport": "Overview balances a luminous settlement zone against compact metric readings; each card’s tonal weight reflects its operational urgency.",
+      "case": "It improves the system’s dense-data discipline, but the darkroom metaphor needs careful translation to avoid obscuring familiar operations patterns.",
+      "risk": "Overusing hatching or exposure notation would turn clear financial data into a visual puzzle.",
+      "comp": ".impeccable/mocks/decision/exposure-ledger.webp",
+      "hero": "https://impeccable.style/worlds/cards/operate-b-exposure-record-zone-sheets-hero.webp"
+    },
+    {
+      "id": "challenger-sneaker-archive",
+      "label": "The Retrieved Record",
+      "verdict": "competitive",
+      "lineage": "an archive wall where selected artifacts pull physically forward from an ordered stack",
+      "thesis": "The table is a shelf of records; selecting one pulls its evidence forward into a focused, layered drawer.",
+      "palette": ["#FDFDFF", "#202033", "#8878FF", "#EAE6FF"],
+      "materials": ["labeled record edges", "layered drawers", "soft paper-like panels"],
+      "viewport": "Overview keeps cards in a strict reference grid while one selected trend or record carries the lavender emphasis forward.",
+      "case": "Its retrieval behavior makes drill-down intuitive, though its archive metaphor is less native to finance than the assigned atlas.",
+      "risk": "Too much physicality could make rapid row scanning feel slow.",
+      "comp": ".impeccable/mocks/decision/retrieved-record.webp",
+      "hero": "https://impeccable.style/worlds/cards/textiles-weave-drape-fashion-sneaker-box-stacks-hero.webp"
+    },
+    {
+      "id": "challenger-alphabet-storm",
+      "label": "Alphabet Storm",
+      "verdict": "declined",
+      "lineage": "an impossible word-weather landscape",
+      "thesis": "A data field where labels behave like weather.",
+      "palette": ["#FFFFFF", "#171722", "#A69BFF", "#D6D2E8"],
+      "materials": ["monumental type", "kinetic letter fields"],
+      "viewport": "A responsive, animated metric field leads the dashboard.",
+      "case": "It loses on audience identification and product clarity for financial operations.",
+      "kept": "Use one concise, reversible change signal when a filter or date range updates.",
+      "risk": "Its language-first spectacle would compete with the data.",
+      "hero": "https://impeccable.style/worlds/cards/dream-surreal-impossible-worlds-alphabet-storm-hero.webp"
+    },
+    {
+      "id": "challenger-cutting-bench",
+      "label": "Cutting Bench",
+      "verdict": "declined",
+      "lineage": "a film editor’s perforated selection rail",
+      "thesis": "Records advance along a tactile edit strip.",
+      "palette": ["#101010", "#FFFFFF", "#F38B31"],
+      "materials": ["perforated rails", "tape flags", "film grain"],
+      "viewport": "The dashboard becomes an edited strip of transaction frames.",
+      "case": "It loses on product clarity and conflicts with the requested calm, light-purple direction.",
+      "kept": "Selected rows retain a clear positional trail into the detail drawer.",
+      "risk": "Its heavy material and orange dominance would overpower the admin task.",
+      "hero": "https://impeccable.style/worlds/cards/operate-a-cutting-bench-select-rail-hero.webp"
+    },
+    {
+      "id": "challenger-designers-republic",
+      "label": "Information Noise Sleeve",
+      "verdict": "declined",
+      "lineage": "a Designers Republic-style dense information sleeve",
+      "thesis": "The interface uses branded signal noise as its data language.",
+      "palette": ["#050505", "#FFFFFF", "#FF2DAA", "#FF6B00"],
+      "materials": ["registration marks", "hazard typography", "edge-to-edge grids"],
+      "viewport": "A high-density command surface opens with competing marks and codes.",
+      "case": "It loses on both audience identification and clarity for an operations dashboard.",
+      "kept": "Give the primary active state one unmistakable visual signal.",
+      "risk": "It breaks the simplicity requirement and makes routine scanning exhausting.",
+      "hero": "https://impeccable.style/worlds/cards/tdr-info-noise-sleeve-hero.webp"
+    },
+    {
+      "id": "challenger-variety-telop",
+      "label": "Live Caption Field",
+      "verdict": "declined",
+      "lineage": "a variety-show caption system",
+      "thesis": "Data events land as expressive, animated captions.",
+      "palette": ["#FFFFFF", "#1C1930", "#A47AFF", "#FFCC4D"],
+      "materials": ["outlined type", "timed callouts", "comic emphasis"],
+      "viewport": "The dashboard narrates settlement changes in a kinetic overlay.",
+      "case": "It loses on both axes: the emphasis system is too expressive for the sustained task.",
+      "kept": "Make state changes readable at a glance, with reduced-motion fallbacks.",
+      "risk": "Its motion vocabulary would distract from tabular investigation.",
+      "hero": "https://impeccable.style/worlds/cards/variety-telop-caption-field-hero.webp"
+    }
+  ],
+  "reroll": { "registers": ["safer", "bolder"] },
+  "buildPath": { "value": "comp", "toggle": true },
+  "canon": true,
+  "canonCard": {
+    "label": "The category standard",
+    "thesis": "A polished conventional fintech dashboard with familiar cards, side navigation, filters, and tables.",
+    "palette": ["#FFFFFF", "#111827", "#2563EB"],
+    "materials": ["clean grid", "subtle shadows", "standard controls"],
+    "viewport": "A conventional analytics header leads into KPI cards and chart panels.",
+    "risk": "It is easy to trust but indistinguishable from other admin dashboards.",
+    "comp": ".impeccable/mocks/decision/category-standard.webp"
+  },
+  "steer": true
+}

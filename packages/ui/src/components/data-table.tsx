@@ -37,6 +37,8 @@ export interface DataTableProps {
   selection?: "none" | "single" | "multiple"
   selectedIds?: readonly string[]
   defaultSelectedIds?: readonly string[]
+  /** Highlights the record currently open in contextual detail. */
+  activeRowId?: string
   onSelectionChange?: (ids: string[]) => void
   "data-testid"?: string
 }
@@ -54,6 +56,7 @@ export function DataTable({
   selection = "none",
   selectedIds,
   defaultSelectedIds = [],
+  activeRowId,
   onSelectionChange,
   "data-testid": testId,
 }: DataTableProps) {
@@ -187,6 +190,7 @@ export function DataTable({
                   "border-b border-border/70 transition-colors last:border-0 hover:bg-muted/65 focus-visible:outline-2 focus-visible:outline-ring",
                   onRowActivate && !row.disabled && "cursor-pointer",
                   selected.includes(row.id) && "bg-muted",
+                  activeRowId === row.id && "bg-accent text-accent-foreground",
                   row.disabled && "opacity-50"
                 )}
               >

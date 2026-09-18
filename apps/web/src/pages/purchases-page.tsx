@@ -10,9 +10,9 @@ import {
 } from "@workspace/ui/components/date-range-picker"
 import { FormField } from "@workspace/ui/components/field"
 import { Text } from "@workspace/ui/components/text"
+import { Drawer } from "@workspace/ui/components/drawer"
 import { PaymentDetails } from "@/components/payment-details"
 import { PageFeedback } from "@/components/page-feedback"
-import { ResponsiveDetailDrawer } from "@/components/responsive-detail-drawer"
 import type { Payment } from "@/data/models/payment"
 import { usePayments } from "@/hooks/use-payments"
 import { useStablePending } from "@/hooks/use-stable-pending"
@@ -93,24 +93,27 @@ export function PurchasesPage({
   )
 
   return (
-    <section className="p-5 md:p-9">
-      <div className="mb-8">
-        <Text role="heading" headingLevel={2} variant="heading">
-          Purchases
-        </Text>
-        <Text tone="muted">Review payments and processing outcomes.</Text>
-      </div>
-      <div className="mb-4">
-        <FormField label="Purchase date range">
-          <DateRangePicker
-            defaultMonth={latestPaymentDate}
-            onValueChange={setDateRange}
-            value={dateRange}
-          />
-        </FormField>
+    <section className="mx-auto max-w-[110rem] p-5 md:p-9">
+      <div className="mb-6 flex flex-col justify-between gap-5 border-b border-border/80 pb-7 md:flex-row md:items-end">
+        <div>
+          <Text role="heading" headingLevel={2} variant="heading">
+            Purchases
+          </Text>
+          <Text tone="muted">Review payments and processing outcomes.</Text>
+        </div>
+        <div className="w-full md:w-auto">
+          <FormField label="Purchase date range">
+            <DateRangePicker
+              defaultMonth={latestPaymentDate}
+              onValueChange={setDateRange}
+              value={dateRange}
+            />
+          </FormField>
+        </div>
       </div>
       <DataTable
         ariaLabel="Purchases"
+        activeRowId={selectedPayment?.id}
         columns={columns}
         rows={filteredPayments.map(tableRow)}
         defaultSorting={{ column: "createdAt", direction: "descending" }}
@@ -119,18 +122,20 @@ export function PurchasesPage({
           if (row) onSelectPayment(row)
         }}
       />
-      <ResponsiveDetailDrawer
+      <Drawer
         open={selectedPayment !== undefined}
         onOpenChange={(open) => !open && onCloseDetail()}
         title="Payment details"
         description="Payment record and processing information."
+        placement="detail"
+        data-testid="responsive-detail-drawer"
       >
         {selectedPayment ? (
           <PaymentDetails payment={selectedPayment} />
         ) : (
           <Text tone="muted">This purchase could not be found.</Text>
         )}
-      </ResponsiveDetailDrawer>
+      </Drawer>
     </section>
   )
 }

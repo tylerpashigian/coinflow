@@ -58,14 +58,14 @@ export function DashboardPage() {
     metric === "amount" ? formatCurrency(value) : formatCompactNumber(value)
 
   return (
-    <section className="p-5 md:p-9">
-      <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+    <section className="mx-auto max-w-[96rem] p-5 md:p-9">
+      <div className="mb-8 flex flex-col justify-between gap-5 border-b border-border/80 pb-7 md:flex-row md:items-end">
         <div>
           <Text role="heading" headingLevel={2} variant="heading">
-            Overview
+            Operator overview
           </Text>
           <Text tone="muted">
-            A high-level view of payment activity across all merchants.
+            Settlement activity and customer movement across every merchant.
           </Text>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -93,7 +93,7 @@ export function DashboardPage() {
           ></Tabs>
         </div>
       </div>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-3">
         <SummaryCard
           label="Payments"
           value={formatCurrency(data.summaries.payments)}
@@ -112,7 +112,7 @@ export function DashboardPage() {
           detail={data.rangeLabel}
         />
       </div>
-      <div className="mt-5 grid gap-5 xl:grid-cols-2">
+      <div className="mt-7 grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(22rem,0.85fr)]">
         <TrendCard
           tone="primary"
           data={chartPoints(data.paymentSeries)}
@@ -170,7 +170,12 @@ function TrendCard({
   total: string
 }) {
   return (
-    <Card title={title} description="Settled volume by day" summary={total}>
+    <Card
+      density="spacious"
+      title={title}
+      description="Settled volume by day"
+      summary={total}
+    >
       <div className="mt-5">
         <Tabs
           label={`${title} metric`}
@@ -184,11 +189,12 @@ function TrendCard({
           }}
         ></Tabs>
       </div>
-      <div className="mt-5 min-h-64">
+      <div className="mt-6 min-h-64">
         <LineChart
           ariaLabel={`${title} ${metric} trend`}
           tone={tone}
           data={data}
+          height={tone === "primary" ? 320 : 264}
         />
       </div>
     </Card>

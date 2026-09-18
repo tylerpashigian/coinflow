@@ -1,0 +1,700 @@
+{
+  "tool": "comp-spec",
+  "version": 1,
+  "createdAt": "2026-09-18T02:58:12.143Z",
+  "comp": ".impeccable/mocks/operators-field-guide-primary.webp",
+  "warnings": [],
+  "uncoveredInkCells": [],
+  "compSize": {
+    "width": 1504,
+    "height": 1046
+  },
+  "aspect": 1.4379,
+  "orientation": "landscape",
+  "palette": [
+    {
+      "hex": "#f8f8f8",
+      "coverage": 0.9868
+    },
+    {
+      "hex": "#c3c3cd",
+      "coverage": 0.0051
+    },
+    {
+      "hex": "#838391",
+      "coverage": 0.004
+    },
+    {
+      "hex": "#080812",
+      "coverage": 0.0034
+    },
+    {
+      "hex": "#585868",
+      "coverage": 0.0007
+    }
+  ],
+  "bands": [
+    {
+      "y": 0.0337,
+      "strength": 0.2119
+    },
+    {
+      "y": 0.0562,
+      "strength": 0.2538
+    },
+    {
+      "y": 0.1573,
+      "strength": 0.2519
+    },
+    {
+      "y": 0.1798,
+      "strength": 0.3307
+    },
+    {
+      "y": 0.9101,
+      "strength": 0.2021
+    }
+  ],
+  "regions": [
+    {
+      "id": "navigation-rail",
+      "kind": "chrome",
+      "note": "fixed light application rail with brand, navigation, and operator account",
+      "grid": "A0:B9",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "w": 0.2,
+        "h": 1
+      },
+      "px": {
+        "x": 0,
+        "y": 0,
+        "w": 301,
+        "h": 1046
+      },
+      "aspect": 0.2878,
+      "palette": [
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.9884
+        },
+        {
+          "hex": "#080813",
+          "coverage": 0.0042
+        },
+        {
+          "hex": "#cdcdd7",
+          "coverage": 0.0035
+        },
+        {
+          "hex": "#787888",
+          "coverage": 0.0022
+        },
+        {
+          "hex": "#9d9da8",
+          "coverage": 0.0017
+        }
+      ],
+      "detail": {
+        "energy": 6.8142
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "page-heading",
+      "kind": "text",
+      "note": "Admin Home heading and concise payment-activity description",
+      "grid": "B0:F1",
+      "coverBox": {
+        "x": 0.1,
+        "y": 0,
+        "w": 0.5,
+        "h": 0.2
+      },
+      "box": {
+        "x": 0.1636,
+        "y": 0.0229,
+        "w": 0.1316,
+        "h": 0.0459
+      },
+      "px": {
+        "x": 246,
+        "y": 24,
+        "w": 198,
+        "h": 48
+      },
+      "aspect": 4.125,
+      "palette": [
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.7058
+        },
+        {
+          "hex": "#0a0c17",
+          "coverage": 0.1984
+        },
+        {
+          "hex": "#d3d4e1",
+          "coverage": 0.0381
+        },
+        {
+          "hex": "#a8aab5",
+          "coverage": 0.0381
+        },
+        {
+          "hex": "#767883",
+          "coverage": 0.0196
+        }
+      ],
+      "detail": {
+        "energy": 45.8754
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 5,
+          "capHeightPx": 31.7,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 1.1678,
+          "advTall": 0.5523,
+          "advX": 1.3887,
+          "gap": 0.0789,
+          "xRatio": 0.7317,
+          "stemW": 0.1938,
+          "contrast": 1.1099,
+          "serif": null,
+          "densTall": 0.6846,
+          "densX": 0.5545,
+          "weight": 0.6846
+        },
+        "widthClass": "wide",
+        "weightClass": "black",
+        "chosen": {
+          "family": "Ranga",
+          "weight": 700,
+          "fontSizePx": 45,
+          "source": "catalog",
+          "estimatedSize": true,
+          "stamp": "12d46835a078"
+        }
+      }
+    },
+    {
+      "id": "date-control",
+      "kind": "control",
+      "note": "date-range selector",
+      "grid": "H0:J1",
+      "coverBox": {
+        "x": 0.7,
+        "y": 0,
+        "w": 0.3,
+        "h": 0.2
+      },
+      "box": {
+        "x": 0.7161,
+        "y": 0.1434,
+        "w": 0.1117,
+        "h": 0.0564
+      },
+      "px": {
+        "x": 1077,
+        "y": 150,
+        "w": 168,
+        "h": 59
+      },
+      "aspect": 2.8475,
+      "palette": [
+        {
+          "hex": "#f7f8f8",
+          "coverage": 0.8007
+        },
+        {
+          "hex": "#0a0b17",
+          "coverage": 0.1368
+        },
+        {
+          "hex": "#54555f",
+          "coverage": 0.0257
+        },
+        {
+          "hex": "#bfc1cb",
+          "coverage": 0.022
+        },
+        {
+          "hex": "#8f9399",
+          "coverage": 0.0147
+        }
+      ],
+      "detail": {
+        "energy": 35.6529
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "metric-strip",
+      "kind": "chrome",
+      "note": "three compact operational metric cards",
+      "grid": "B1:J2",
+      "box": {
+        "x": 0.1,
+        "y": 0.1,
+        "w": 0.9,
+        "h": 0.2
+      },
+      "px": {
+        "x": 150,
+        "y": 105,
+        "w": 1354,
+        "h": 209
+      },
+      "aspect": 6.4785,
+      "palette": [
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.9763
+        },
+        {
+          "hex": "#0a0a15",
+          "coverage": 0.0126
+        },
+        {
+          "hex": "#636371",
+          "coverage": 0.0045
+        },
+        {
+          "hex": "#8d8d95",
+          "coverage": 0.0038
+        },
+        {
+          "hex": "#bfbfca",
+          "coverage": 0.0028
+        }
+      ],
+      "detail": {
+        "energy": 14.9989
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "settlement-title",
+      "kind": "text",
+      "note": "Settlement trend title and supporting description",
+      "grid": "B2:F3",
+      "coverBox": {
+        "x": 0.1,
+        "y": 0.2,
+        "w": 0.5,
+        "h": 0.2
+      },
+      "box": {
+        "x": 0.1795,
+        "y": 0.2744,
+        "w": 0.1117,
+        "h": 0.0344
+      },
+      "px": {
+        "x": 270,
+        "y": 287,
+        "w": 168,
+        "h": 36
+      },
+      "aspect": 4.6667,
+      "palette": [
+        {
+          "hex": "#f7f7f8",
+          "coverage": 0.7933
+        },
+        {
+          "hex": "#0c0d14",
+          "coverage": 0.1231
+        },
+        {
+          "hex": "#545762",
+          "coverage": 0.0334
+        },
+        {
+          "hex": "#c0c3ce",
+          "coverage": 0.0319
+        },
+        {
+          "hex": "#909497",
+          "coverage": 0.0182
+        }
+      ],
+      "detail": {
+        "energy": 45.3928
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 14,
+          "capHeightPx": 16,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6577,
+          "advTall": 0.2192,
+          "advX": 0.6577,
+          "gap": 0.0626,
+          "xRatio": 0.7343,
+          "stemW": 0.2017,
+          "contrast": 1.2231,
+          "serif": null,
+          "densTall": 0.7716,
+          "densX": 0.6458,
+          "weight": 0.7716
+        },
+        "widthClass": "normal",
+        "weightClass": "black"
+      }
+    },
+    {
+      "id": "settlement-controls",
+      "kind": "control",
+      "note": "compact metric switcher",
+      "grid": "F2:G3",
+      "coverBox": {
+        "x": 0.5,
+        "y": 0.2,
+        "w": 0.2,
+        "h": 0.2
+      },
+      "box": {
+        "x": 0.5,
+        "y": 0.1998,
+        "w": 0.0838,
+        "h": 0.0172
+      },
+      "px": {
+        "x": 752,
+        "y": 209,
+        "w": 126,
+        "h": 18
+      },
+      "aspect": 7,
+      "palette": [
+        {
+          "hex": "#f7f7f8",
+          "coverage": 0.7302
+        },
+        {
+          "hex": "#8e8f9a",
+          "coverage": 0.2024
+        },
+        {
+          "hex": "#c9cad6",
+          "coverage": 0.0635
+        },
+        {
+          "hex": "#686878",
+          "coverage": 0.004
+        }
+      ],
+      "detail": {
+        "energy": 22.7919
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "settlement-chart",
+      "kind": "chrome",
+      "note": "primary responsive payment settlement chart",
+      "grid": "B3:G6",
+      "box": {
+        "x": 0.1,
+        "y": 0.3,
+        "w": 0.6,
+        "h": 0.4
+      },
+      "px": {
+        "x": 150,
+        "y": 314,
+        "w": 902,
+        "h": 418
+      },
+      "aspect": 2.1579,
+      "palette": [
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.9924
+        },
+        {
+          "hex": "#ccccd9",
+          "coverage": 0.003
+        },
+        {
+          "hex": "#9898a5",
+          "coverage": 0.0028
+        },
+        {
+          "hex": "#8171d1",
+          "coverage": 0.0012
+        },
+        {
+          "hex": "#080818",
+          "coverage": 0.0006
+        }
+      ],
+      "detail": {
+        "energy": 5.9384
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "supporting-chart",
+      "kind": "chrome",
+      "note": "supporting payout chart",
+      "grid": "G2:J6",
+      "box": {
+        "x": 0.6,
+        "y": 0.2,
+        "w": 0.4,
+        "h": 0.5
+      },
+      "px": {
+        "x": 902,
+        "y": 209,
+        "w": 602,
+        "h": 523
+      },
+      "aspect": 1.1511,
+      "palette": [
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.9968
+        },
+        {
+          "hex": "#ccccdf",
+          "coverage": 0.0027
+        },
+        {
+          "hex": "#888898",
+          "coverage": 0.0005
+        }
+      ],
+      "detail": {
+        "energy": 4.7511
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "payments-table-title",
+      "kind": "text",
+      "note": "recent payments title",
+      "grid": "B6:F6",
+      "coverBox": {
+        "x": 0.1,
+        "y": 0.6,
+        "w": 0.5,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.1755,
+        "y": 0.652,
+        "w": 0.1037,
+        "h": 0.0344
+      },
+      "px": {
+        "x": 264,
+        "y": 682,
+        "w": 156,
+        "h": 36
+      },
+      "aspect": 4.3333,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.8143
+        },
+        {
+          "hex": "#090912",
+          "coverage": 0.0717
+        },
+        {
+          "hex": "#232635",
+          "coverage": 0.0456
+        },
+        {
+          "hex": "#afb1b9",
+          "coverage": 0.0358
+        },
+        {
+          "hex": "#76767b",
+          "coverage": 0.0326
+        }
+      ],
+      "detail": {
+        "energy": 41.3199
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 13,
+          "capHeightPx": 15.6,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6591,
+          "advTall": 0.4341,
+          "advX": 0.6752,
+          "gap": 0.0643,
+          "xRatio": 0.7525,
+          "stemW": 0.2077,
+          "contrast": 1.1722,
+          "serif": null,
+          "densTall": 0.6496,
+          "densX": 0.6626,
+          "weight": 0.6496
+        },
+        "widthClass": "normal",
+        "weightClass": "bold"
+      }
+    },
+    {
+      "id": "payouts-table-title",
+      "kind": "text",
+      "note": "payout status title",
+      "grid": "F6:J6",
+      "box": {
+        "x": 0.5,
+        "y": 0.6,
+        "w": 0.5,
+        "h": 0.1
+      },
+      "px": {
+        "x": 752,
+        "y": 628,
+        "w": 752,
+        "h": 105
+      },
+      "aspect": 7.1619,
+      "palette": [
+        {
+          "hex": "#f8f8f8",
+          "coverage": 1
+        }
+      ],
+      "detail": {
+        "energy": 1.6396
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "payments-table",
+      "kind": "chrome",
+      "note": "recent payments table",
+      "grid": "B7:F9",
+      "box": {
+        "x": 0.1,
+        "y": 0.7,
+        "w": 0.5,
+        "h": 0.3
+      },
+      "px": {
+        "x": 150,
+        "y": 732,
+        "w": 752,
+        "h": 314
+      },
+      "aspect": 2.3949,
+      "palette": [
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.972
+        },
+        {
+          "hex": "#656571",
+          "coverage": 0.0104
+        },
+        {
+          "hex": "#9d9da8",
+          "coverage": 0.0101
+        },
+        {
+          "hex": "#c8cad0",
+          "coverage": 0.0067
+        },
+        {
+          "hex": "#383848",
+          "coverage": 0.0008
+        }
+      ],
+      "detail": {
+        "energy": 9.5989
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "payouts-table",
+      "kind": "chrome",
+      "note": "payout status table",
+      "grid": "F7:J9",
+      "box": {
+        "x": 0.5,
+        "y": 0.7,
+        "w": 0.5,
+        "h": 0.3
+      },
+      "px": {
+        "x": 752,
+        "y": 732,
+        "w": 752,
+        "h": 314
+      },
+      "aspect": 2.3949,
+      "palette": [
+        {
+          "hex": "#f7f8f7",
+          "coverage": 0.9891
+        },
+        {
+          "hex": "#eef8dd",
+          "coverage": 0.0061
+        },
+        {
+          "hex": "#808090",
+          "coverage": 0.0018
+        },
+        {
+          "hex": "#f8dfd8",
+          "coverage": 0.0015
+        },
+        {
+          "hex": "#606070",
+          "coverage": 0.0014
+        }
+      ],
+      "detail": {
+        "energy": 6.7163
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    }
+  ]
+}

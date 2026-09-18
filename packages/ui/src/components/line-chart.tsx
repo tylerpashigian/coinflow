@@ -13,6 +13,8 @@ export interface LineChartProps {
   ariaLabel: string
   tone?: "primary" | "secondary"
   data: readonly LineChartPoint[]
+  /** Height in pixels. Use this rather than styling a chart per consuming route. */
+  height?: number
 }
 
 /** Shared responsive TanStack Charts presentation for simple time-series data. */
@@ -20,6 +22,7 @@ export function LineChart({
   ariaLabel,
   tone = "primary",
   data,
+  height = 264,
 }: LineChartProps) {
   const definition = useMemo(
     () =>
@@ -40,5 +43,5 @@ export function LineChart({
     [tone, data]
   )
 
-  return <Chart ariaLabel={ariaLabel} definition={definition} height={264} />
+  return <Chart ariaLabel={ariaLabel} definition={definition} height={height} />
 }

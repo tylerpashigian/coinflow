@@ -10,9 +10,9 @@ import {
 } from "@workspace/ui/components/date-range-picker"
 import { FormField } from "@workspace/ui/components/field"
 import { Text } from "@workspace/ui/components/text"
+import { Drawer } from "@workspace/ui/components/drawer"
 import { CustomerDetails } from "@/components/customer-details"
 import { PageFeedback } from "@/components/page-feedback"
-import { ResponsiveDetailDrawer } from "@/components/responsive-detail-drawer"
 import type { Customer } from "@/data/models/customer"
 import { useCustomers } from "@/hooks/use-customers"
 import { useStablePending } from "@/hooks/use-stable-pending"
@@ -96,26 +96,29 @@ export function CustomersPage({
   )
 
   return (
-    <section className="p-5 md:p-9">
-      <div className="mb-8">
-        <Text role="heading" headingLevel={2} variant="heading">
-          Customers
-        </Text>
-        <Text tone="muted">
-          Review customer records, activity, and saved methods.
-        </Text>
-      </div>
-      <div className="mb-4">
-        <FormField label="Customer date range">
-          <DateRangePicker
-            defaultMonth={latestCustomerDate}
-            onValueChange={setDateRange}
-            value={dateRange}
-          />
-        </FormField>
+    <section className="mx-auto max-w-[110rem] p-5 md:p-9">
+      <div className="mb-6 flex flex-col justify-between gap-5 border-b border-border/80 pb-7 md:flex-row md:items-end">
+        <div>
+          <Text role="heading" headingLevel={2} variant="heading">
+            Customers
+          </Text>
+          <Text tone="muted">
+            Review customer records, activity, and saved methods.
+          </Text>
+        </div>
+        <div className="w-full md:w-auto">
+          <FormField label="Customer date range">
+            <DateRangePicker
+              defaultMonth={latestCustomerDate}
+              onValueChange={setDateRange}
+              value={dateRange}
+            />
+          </FormField>
+        </div>
       </div>
       <DataTable
         ariaLabel="Customers"
+        activeRowId={selectedCustomer?.id}
         columns={columns}
         rows={filteredCustomers.map(tableRow)}
         defaultSorting={{ column: "createdAt", direction: "descending" }}
@@ -124,18 +127,20 @@ export function CustomersPage({
           if (row) onSelectCustomer(row)
         }}
       />
-      <ResponsiveDetailDrawer
+      <Drawer
         open={selectedCustomer !== undefined}
         onOpenChange={(open) => !open && onCloseDetail()}
         title="Customer details"
         description="Customer identity, activity, and saved payment methods."
+        placement="detail"
+        data-testid="responsive-detail-drawer"
       >
         {selectedCustomer ? (
           <CustomerDetails customer={selectedCustomer} />
         ) : (
           <Text tone="muted">This customer could not be found.</Text>
         )}
-      </ResponsiveDetailDrawer>
+      </Drawer>
     </section>
   )
 }
