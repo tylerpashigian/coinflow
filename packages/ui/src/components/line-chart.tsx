@@ -4,31 +4,40 @@ import { Chart } from "@tanstack/charts/react"
 import { scaleLinear } from "@tanstack/charts/scales/linear"
 import { scalePoint } from "@tanstack/charts/scales/point"
 
-export type LineChartPoint = {
+export interface LineChartPoint {
   label: string
   value: number
 }
 
-type LineChartProps = {
+export interface LineChartProps {
   ariaLabel: string
-  color: string
+  tone?: "primary" | "secondary"
   data: readonly LineChartPoint[]
 }
 
 /** Shared responsive TanStack Charts presentation for simple time-series data. */
-export function LineChart({ ariaLabel, color, data }: LineChartProps) {
+export function LineChart({
+  ariaLabel,
+  tone = "primary",
+  data,
+}: LineChartProps) {
   const definition = useMemo(
     () =>
       defineChart({
         marks: [
-          lineY(data, { x: "label", y: "value", stroke: color, points: true }),
+          lineY(data, {
+            x: "label",
+            y: "value",
+            stroke: tone === "primary" ? "var(--chart-1)" : "var(--chart-2)",
+            points: true,
+          }),
         ],
         scales: {
           x: { scale: scalePoint },
           y: { scale: scaleLinear, nice: true },
         },
       }),
-    [color, data]
+    [tone, data]
   )
 
   return <Chart ariaLabel={ariaLabel} definition={definition} height={264} />

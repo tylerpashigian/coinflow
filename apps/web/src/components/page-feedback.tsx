@@ -13,7 +13,7 @@ export function PageFeedback({ message, status }: PageFeedbackProps) {
     <section className="grid min-h-svh place-items-center p-5 md:p-9">
       <div
         aria-live="polite"
-        className="flex max-w-sm flex-col items-center gap-3 text-center"
+        className="flex max-w-sm flex-col items-center gap-3"
         role={isLoading ? "status" : "alert"}
       >
         {isLoading ? (
@@ -22,7 +22,9 @@ export function PageFeedback({ message, status }: PageFeedbackProps) {
             className="size-5 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-primary"
           />
         ) : null}
-        <Text tone={isLoading ? "muted" : "danger"}>{message}</Text>
+        <Text align="center" tone={isLoading ? "muted" : "danger"}>
+          {message}
+        </Text>
       </div>
     </section>
   )

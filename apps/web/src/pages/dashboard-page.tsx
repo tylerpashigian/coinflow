@@ -1,9 +1,8 @@
+import { Select } from "@workspace/ui/components/select"
 import { useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Calendar03Icon } from "@hugeicons/core-free-icons"
 import { Card } from "@workspace/ui/components/card"
 import { LineChart } from "@workspace/ui/components/line-chart"
-import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
+import { Tabs } from "@workspace/ui/components/tabs"
 import { Text } from "@workspace/ui/components/text"
 import { PageFeedback } from "@/components/page-feedback"
 import { useDashboardOverview } from "@/hooks/use-dashboard-overview"
@@ -34,12 +33,20 @@ export function DashboardPage() {
   })
   const showPending = useStablePending(overview.status === "loading")
 
-  if (overview.status === "loading" || (overview.status === "ready" && showPending))
+  if (
+    overview.status === "loading" ||
+    (overview.status === "ready" && showPending)
+  )
     return showPending ? (
       <PageFeedback message="Loading dashboard overview…" status="loading" />
     ) : null
   if (overview.status === "error")
-    return <PageFeedback message="Unable to load dashboard overview." status="error" />
+    return (
+      <PageFeedback
+        message="Unable to load dashboard overview."
+        status="error"
+      />
+    )
 
   const data = overview.data
   const chartPoints = (series: typeof data.paymentSeries) =>
@@ -54,7 +61,7 @@ export function DashboardPage() {
     <section className="p-5 md:p-9">
       <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <Text as="h2" variant="heading">
+          <Text role="heading" headingLevel={2} variant="heading">
             Overview
           </Text>
           <Text tone="muted">
@@ -62,35 +69,28 @@ export function DashboardPage() {
           </Text>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <label
-            className="inline-flex items-center gap-2 rounded-lg border bg-card px-3 py-2 text-sm font-medium"
-            htmlFor="date-range"
-          >
-            <HugeiconsIcon icon={Calendar03Icon} size={17} /> {data.rangeLabel}
-            <select
-              aria-label="Date range"
-              className="sr-only"
-              id="date-range"
-              value={range}
-              onChange={(event) =>
-                setRange(event.target.value as keyof typeof dateRanges)
-              }
-            >
-              <option value="previous">Aug 17 – Aug 23, 2026</option>
-              <option value="current">Aug 24 – Aug 30, 2026</option>
-            </select>
-          </label>
+          <Select
+            aria-label="Date range"
+            value={range}
+            onValueChange={(value) => {
+              if (value === "previous" || value === "current") setRange(value)
+            }}
+            options={[
+              { value: "previous", label: "Aug 17 – Aug 23, 2026" },
+              { value: "current", label: "Aug 24 – Aug 30, 2026" },
+            ]}
+          />
           <Tabs
+            label="Timezone"
+            items={[
+              { value: "local", label: "Local" },
+              { value: "utc", label: "UTC" },
+            ]}
             value={timezone}
             onValueChange={(value) => {
               if (value === "local" || value === "utc") setTimezone(value)
             }}
-          >
-            <TabsList aria-label="Timezone">
-              <TabsTrigger value="local">Local</TabsTrigger>
-              <TabsTrigger value="utc">UTC</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          ></Tabs>
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-3">
@@ -114,7 +114,7 @@ export function DashboardPage() {
       </div>
       <div className="mt-5 grid gap-5 xl:grid-cols-2">
         <TrendCard
-          color="var(--chart-1)"
+          tone="primary"
           data={chartPoints(data.paymentSeries)}
           metric={metric}
           onMetricChange={setMetric}
@@ -126,7 +126,7 @@ export function DashboardPage() {
           )}
         />
         <TrendCard
-          color="var(--chart-2)"
+          tone="secondary"
           data={chartPoints(data.payoutSeries)}
           metric={metric}
           onMetricChange={setMetric}
@@ -151,28 +151,18 @@ function SummaryCard({
   value: string
   detail: string
 }) {
-  return (
-    <Card className="p-5">
-      <Text tone="muted">{label}</Text>
-      <Text as="p" size="xl" weight="semibold" className="mt-2 tracking-tight">
-        {value}
-      </Text>
-      <Text variant="caption" tone="muted" className="mt-2">
-        {detail}
-      </Text>
-    </Card>
-  )
+  return <Card variant="metric" title={label} summary={value} footer={detail} />
 }
 
 function TrendCard({
-  color,
+  tone,
   data,
   metric,
   onMetricChange,
   title,
   total,
 }: {
-  color: string
+  tone: "primary" | "secondary"
   data: { label: string; value: number }[]
   metric: DashboardMetric
   onMetricChange: (value: DashboardMetric) => void
@@ -180,37 +170,24 @@ function TrendCard({
   total: string
 }) {
   return (
-    <Card className="p-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <Text as="h3" weight="semibold">
-            {title}
-          </Text>
-          <Text variant="caption" tone="muted">
-            Settled volume by day
-          </Text>
-        </div>
-        <Text as="p" size="lg" weight="semibold">
-          {total}
-        </Text>
-      </div>
+    <Card title={title} description="Settled volume by day" summary={total}>
       <div className="mt-5">
         <Tabs
+          label={`${title} metric`}
+          items={[
+            { value: "amount", label: "Amount" },
+            { value: "count", label: "Count" },
+          ]}
           value={metric}
           onValueChange={(value) => {
             if (value === "amount" || value === "count") onMetricChange(value)
           }}
-        >
-          <TabsList aria-label={`${title} metric`}>
-            <TabsTrigger value="amount">Amount</TabsTrigger>
-            <TabsTrigger value="count">Count</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        ></Tabs>
       </div>
       <div className="mt-5 min-h-64">
         <LineChart
           ariaLabel={`${title} ${metric} trend`}
-          color={color}
+          tone={tone}
           data={data}
         />
       </div>

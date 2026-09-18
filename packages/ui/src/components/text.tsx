@@ -1,79 +1,96 @@
-import { createElement, type ComponentPropsWithRef } from "react"
+import { createElement } from "react"
 import { cn } from "cn"
-
+export interface TextProps {
+  children: string | number
+  role?:
+    | "paragraph"
+    | "inline"
+    | "caption"
+    | "heading"
+    | "emphasis"
+    | "code"
+    | "status"
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6
+  variant?: "body" | "caption" | "subheading" | "heading"
+  size?: "xs" | "sm" | "md" | "lg" | "xl"
+  weight?: "regular" | "medium" | "semibold" | "bold"
+  tone?: "default" | "muted" | "danger"
+  align?: "left" | "center" | "right"
+  truncate?: boolean
+  casing?: "sentence" | "uppercase"
+  id?: string
+  "data-testid"?: string
+}
 const sizes = {
   xs: "text-xs leading-relaxed",
   sm: "text-sm leading-loose",
   md: "text-base leading-relaxed",
   lg: "text-lg leading-snug",
   xl: "text-2xl leading-tight",
-} as const
-
+}
 const weights = {
   regular: "font-normal",
   medium: "font-medium",
   semibold: "font-semibold",
   bold: "font-bold",
-} as const
-
-export type TextSize = keyof typeof sizes
-export type TextWeight = keyof typeof weights
-export type TextElement =
-  | "p"
-  | "span"
-  | "h1"
-  | "h2"
-  | "h3"
-  | "h4"
-  | "h5"
-  | "h6"
-  | "strong"
-  | "em"
-  | "small"
-  | "label"
-  | "code"
-  | "kbd"
-
-const variants = {
-  body: { size: "sm", weight: "regular" },
-  caption: { size: "xs", weight: "regular" },
-  subheading: { size: "sm", weight: "medium" },
-  heading: { size: "xl", weight: "semibold" },
-} as const satisfies Record<string, { size: TextSize; weight: TextWeight }>
-
-export type TextVariant = keyof typeof variants
-
-type TextStyleProps = {
-  variant?: TextVariant
-  size?: TextSize
-  weight?: TextWeight
-  tone?: "default" | "muted" | "danger"
 }
-
-// Inference comes only from `as`, so other props cannot widen the element.
-export type TextProps<Element extends TextElement = "p"> = TextStyleProps &
-  (Element extends "p" ? { as?: Element } : { as: Element }) &
-  Omit<ComponentPropsWithRef<NoInfer<Element>>, keyof TextStyleProps | "as">
-
-export function Text<Element extends TextElement = "p">({
-  as,
+export function Text({
+  children,
+  role = "paragraph",
+  headingLevel = 2,
   variant = "body",
   size,
   weight,
   tone = "default",
-  className,
-  ...props
-}: TextProps<Element>) {
-  const defaults = variants[variant]
-  return createElement(as ?? "p", {
-    ...props,
-    "data-slot": "text",
-    className: cn(
-      sizes[size ?? defaults.size],
-      weights[weight ?? defaults.weight],
-      tone === "muted" && "text-muted-foreground",
-      tone === "danger" && "text-destructive",
-      className
-    ),
-  })
+  align = "left",
+  truncate = false,
+  casing = "sentence",
+  id,
+  "data-testid": testId,
+}: TextProps) {
+  const element =
+    role === "heading"
+      ? `h${headingLevel}`
+      : {
+          paragraph: "p",
+          inline: "span",
+          caption: "p",
+          emphasis: "em",
+          code: "code",
+          status: "p",
+        }[role]
+  return createElement(
+    element,
+    {
+      role: role === "status" ? "status" : undefined,
+      id,
+      "data-testid": testId,
+      "data-slot": "text",
+      className: cn(
+        sizes[
+          size ??
+            (variant === "heading"
+              ? "xl"
+              : variant === "caption" || role === "caption"
+                ? "xs"
+                : "sm")
+        ],
+        weights[
+          weight ??
+            (variant === "heading"
+              ? "semibold"
+              : variant === "subheading"
+                ? "medium"
+                : "regular")
+        ],
+        tone === "muted" && "text-muted-foreground",
+        tone === "danger" && "text-destructive",
+        align === "center" && "text-center",
+        align === "right" && "text-right",
+        truncate && "truncate",
+        casing === "uppercase" && "tracking-wide uppercase"
+      ),
+    },
+    children
+  )
 }

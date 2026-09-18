@@ -22,15 +22,21 @@ export const buttonVariants = cva(
         xs: "h-5 gap-1 rounded-sm px-2 text-[0.625rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-2.5",
         sm: "h-6 gap-1 px-2 text-xs/relaxed has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
         lg: "h-8 gap-1 px-2.5 text-xs/relaxed has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-4",
+        navigation:
+          "h-10 gap-3 rounded-lg px-3 py-2.5 text-sm [&_svg:not([class*='size-'])]:size-[17px]",
         icon: "size-7 [&_svg:not([class*='size-'])]:size-3.5",
         "icon-xs": "size-5 rounded-sm [&_svg:not([class*='size-'])]:size-2.5",
         "icon-sm": "size-6 [&_svg:not([class*='size-'])]:size-3",
         "icon-lg": "size-8 [&_svg:not([class*='size-'])]:size-4",
       },
+      width: { auto: "", full: "w-full" },
+      align: { center: "", start: "justify-start text-left" },
     },
     defaultVariants: {
       variant: "default",
       size: "default",
+      width: "auto",
+      align: "center",
     },
   }
 )

@@ -35,14 +35,13 @@ export function customerBuilder(overrides: Partial<Customer> = {}) {
         last4: faker.string.numeric(4),
       },
     ],
-    activities: [
-      { description: "Customer created", occurredAt: createdAt },
-    ],
+    activities: [{ description: "Customer created", occurredAt: createdAt }],
     ...overrides,
   }
 
   return {
-    with: (values: Partial<Customer>) => customerBuilder({ ...customer, ...values }),
+    with: (values: Partial<Customer>) =>
+      customerBuilder({ ...customer, ...values }),
     build: (): Customer => ({ ...customer }),
   }
 }

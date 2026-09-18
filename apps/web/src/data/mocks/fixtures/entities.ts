@@ -44,10 +44,12 @@ const knownCustomers: Customer[] = [
 
 export const customers: Customer[] = [
   ...knownCustomers,
-  ...Array.from({ length: collectionSize() - knownCustomers.length }, (_, index) =>
-    customerBuilder({
-      id: `cus_${String(index + knownCustomers.length + 1).padStart(4, "0")}`,
-    }).build()
+  ...Array.from(
+    { length: collectionSize() - knownCustomers.length },
+    (_, index) =>
+      customerBuilder({
+        id: `cus_${String(index + knownCustomers.length + 1).padStart(4, "0")}`,
+      }).build()
   ),
 ]
 
@@ -110,13 +112,16 @@ const knownPayments: Payment[] = [
 
 export const payments: Payment[] = [
   ...knownPayments,
-  ...Array.from({ length: collectionSize() - knownPayments.length }, (_, index) => {
-    const customer = faker.helpers.arrayElement(customers)
-    return paymentBuilder({
-      id: `pay_${String(index + knownPayments.length + 1).padStart(4, "0")}`,
-      customerId: customer.id,
-      customerName: customer.name,
-      merchantName: customer.merchantName,
-    }).build()
-  }),
+  ...Array.from(
+    { length: collectionSize() - knownPayments.length },
+    (_, index) => {
+      const customer = faker.helpers.arrayElement(customers)
+      return paymentBuilder({
+        id: `pay_${String(index + knownPayments.length + 1).padStart(4, "0")}`,
+        customerId: customer.id,
+        customerName: customer.name,
+        merchantName: customer.merchantName,
+      }).build()
+    }
+  ),
 ]

@@ -35,7 +35,8 @@ export function paymentBuilder(overrides: Partial<Payment> = {}) {
   }
 
   return {
-    with: (values: Partial<Payment>) => paymentBuilder({ ...payment, ...values }),
+    with: (values: Partial<Payment>) =>
+      paymentBuilder({ ...payment, ...values }),
     build: (): Payment => ({ ...payment }),
   }
 }

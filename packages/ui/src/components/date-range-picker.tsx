@@ -1,89 +1,137 @@
-import { Calendar03Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { registerFieldControl } from "../private/field-controls"
+import { useRef, useState } from "react"
+import { Popover } from "@base-ui/react/popover"
 import { format } from "date-fns"
-import type { DateRange } from "react-day-picker"
-import { Button } from "@workspace/ui/components/button"
-import { Calendar } from "@workspace/ui/components/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@workspace/ui/components/popover"
+import { Calendar } from "../private/calendar"
+import { Icon } from "../private/icons"
+import { useMediaQuery } from "../private/use-media-query"
 import { useFormFieldContext } from "./field-context"
-
-type DateRangePickerProps = {
-  "aria-describedby"?: React.AriaAttributes["aria-describedby"]
-  "aria-invalid"?: React.AriaAttributes["aria-invalid"]
-  "aria-label"?: React.AriaAttributes["aria-label"]
-  "aria-labelledby"?: React.AriaAttributes["aria-labelledby"]
+import { inputVariants } from "./input-variants"
+import { Button } from "./button"
+import type { DateRange } from "./calendar"
+export type { DateRange } from "./calendar"
+export interface DateRangePickerProps {
+  value?: DateRange
+  defaultValue?: DateRange
+  onValueChange?: (range: DateRange | undefined) => void
   defaultMonth?: Date
-  id?: string
-  onValueChange: (range: DateRange | undefined) => void
+  minDate?: Date
+  maxDate?: Date
   placeholder?: string
-  value: DateRange | undefined
+  id?: string
+  name?: string
+  disabled?: boolean
+  required?: boolean
+  size?: "sm" | "md" | "lg"
+  "aria-describedby"?: string
+  "aria-invalid"?: boolean | "true" | "false" | "grammar" | "spelling"
+  "aria-label"?: string
+  "aria-labelledby"?: string
+  "data-testid"?: string
 }
-
-function formatDateRange(range: DateRange | undefined) {
-  if (!range?.from) return null
-  if (!range.to) return `${format(range.from, "MMM d, yyyy")} –`
-  return `${format(range.from, "MMM d, yyyy")} – ${format(range.to, "MMM d, yyyy")}`
-}
-
-/** A controlled date-range picker composed from the shared popover and calendar. */
-export function DateRangePicker({
-  "aria-describedby": ariaDescribedBy,
-  "aria-invalid": ariaInvalid,
-  "aria-label": ariaLabelProp,
-  "aria-labelledby": ariaLabelledBy,
-  defaultMonth,
-  id,
-  onValueChange,
-  placeholder = "Filter by date",
-  value,
-}: DateRangePickerProps) {
+export function DateRangePicker(props: DateRangePickerProps) {
+  const [local, setLocal] = useState(props.defaultValue)
+  const value = Object.prototype.hasOwnProperty.call(props, "value")
+    ? props.value
+    : local
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const [validationAttempted, setValidationAttempted] = useState(false)
+  const complete = Boolean(value?.from && value?.to)
   const field = useFormFieldContext()
-  const label = formatDateRange(value)
-  const hasExplicitName = ariaLabelProp !== undefined || ariaLabelledBy !== undefined
-
+  const wide = useMediaQuery("(min-width: 768px)")
+  const label = value?.from
+    ? `${format(value.from, "MMM d, yyyy")} –${value.to ? ` ${format(value.to, "MMM d, yyyy")}` : ""}`
+    : (props.placeholder ?? "Filter by date")
+  const change = (next: DateRange | undefined) => {
+    setLocal(next)
+    props.onValueChange?.(next)
+  }
   return (
-    <Popover>
-      <PopoverTrigger
-        render={
-          <Button
-            id={id ?? field?.controlId}
-            aria-describedby={ariaDescribedBy ?? field?.describedBy}
-            aria-invalid={ariaInvalid ?? (field?.invalid || undefined)}
-            aria-label={ariaLabelProp ?? (field ? undefined : "Date range")}
-            aria-labelledby={hasExplicitName ? ariaLabelledBy : field?.labelledBy}
-            className="w-full justify-start text-left font-normal sm:w-64"
-            variant="outline"
-          />
+    <Popover.Root>
+      <Popover.Trigger
+        ref={triggerRef}
+        id={props.id ?? field?.controlId}
+        disabled={props.disabled}
+        aria-required={props.required}
+        aria-describedby={props["aria-describedby"] ?? field?.describedBy}
+        aria-invalid={
+          props["aria-invalid"] ??
+          (field?.invalid ||
+            (props.required && validationAttempted && !complete) ||
+            undefined)
         }
+        aria-label={props["aria-label"] ?? (field ? undefined : "Date range")}
+        aria-labelledby={
+          props["aria-label"] || props["aria-labelledby"]
+            ? props["aria-labelledby"]
+            : field?.labelledBy
+        }
+        data-testid={props["data-testid"]}
+        className={`${inputVariants({ size: props.size ?? "md" })} flex items-center gap-2 text-left`}
       >
-        <HugeiconsIcon icon={Calendar03Icon} strokeWidth={2} />
-        <span className={label ? undefined : "text-muted-foreground"}>
-          {label ?? placeholder}
+        <Icon name="calendar" />
+        <span className={value?.from ? undefined : "text-muted-foreground"}>
+          {label}
         </span>
-      </PopoverTrigger>
-      <PopoverContent align="start" className="w-auto gap-0 p-0">
-        <Calendar
-          mode="range"
-          defaultMonth={defaultMonth}
-          numberOfMonths={2}
-          onSelect={onValueChange}
-          selected={value}
+      </Popover.Trigger>
+      {(props.name || props.required) && (
+        <input
+          type="text"
+          className="sr-only"
+          tabIndex={-1}
+          aria-hidden="true"
+          name={props.name}
+          required={props.required}
+          disabled={props.disabled}
+          value={
+            value?.from && value.to
+              ? `${format(value.from, "yyyy-MM-dd")}/${format(value.to, "yyyy-MM-dd")}`
+              : ""
+          }
+          onChange={() => {}}
+          onInvalid={(event) => {
+            event.preventDefault()
+            setValidationAttempted(true)
+            triggerRef.current?.focus()
+          }}
         />
-        {value?.from ? (
-          <div className="flex justify-end border-t p-2">
-            <Button onClick={() => onValueChange(undefined)} size="sm" variant="ghost">
-              Clear dates
-            </Button>
-          </div>
-        ) : null}
-      </PopoverContent>
-    </Popover>
+      )}
+      <Popover.Portal>
+        <Popover.Positioner
+          side="bottom"
+          align="start"
+          sideOffset={4}
+          className="z-50"
+        >
+          <Popover.Popup className="max-w-[calc(100vw-1rem)] rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10">
+            <Popover.Title className="sr-only">Choose date range</Popover.Title>
+            <Calendar
+              mode="range"
+              selected={value}
+              onSelect={change}
+              defaultMonth={props.defaultMonth}
+              numberOfMonths={wide ? 2 : 1}
+              required={props.required}
+              disabled={[
+                ...(props.minDate ? [{ before: props.minDate }] : []),
+                ...(props.maxDate ? [{ after: props.maxDate }] : []),
+              ]}
+            />
+            {value?.from && !props.required && (
+              <div className="flex justify-end border-t p-2">
+                <Button
+                  label="Clear dates"
+                  variant="ghost"
+                  size="sm"
+                  onPress={() => change(undefined)}
+                />
+              </div>
+            )}
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
   )
 }
 
-export type { DateRange }
-import * as React from "react"
+registerFieldControl(DateRangePicker)

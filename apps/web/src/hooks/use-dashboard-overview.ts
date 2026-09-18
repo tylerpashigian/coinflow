@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react"
-import type {
-  DashboardOverview,
-  DashboardQuery,
-} from "@/data/models/dashboard"
+import type { DashboardOverview, DashboardQuery } from "@/data/models/dashboard"
 import { getDashboardOverview } from "@/services/dashboard-service"
 
 type DashboardOverviewState =
