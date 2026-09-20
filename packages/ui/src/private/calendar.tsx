@@ -1,10 +1,6 @@
 import * as React from "react"
 import { cn } from "cn"
-import {
-  DayPicker,
-  type DayButton,
-  type Locale,
-} from "react-day-picker"
+import { DayPicker, type DayButton, type Locale } from "react-day-picker"
 
 import { buttonVariants } from "../components/button-variants"
 import type { PublicProps } from "./public-props"
@@ -66,12 +62,8 @@ function Calendar({
         dropdowns: cn(
           "flex h-(--cell-size) w-full items-center justify-center gap-1.5 text-sm font-medium"
         ),
-        dropdown_root: cn(
-          "relative rounded-(--cell-radius)"
-        ),
-        dropdown: cn(
-          "absolute inset-0 bg-popover opacity-0"
-        ),
+        dropdown_root: cn("relative rounded-(--cell-radius)"),
+        dropdown: cn("absolute inset-0 bg-popover opacity-0"),
         caption_label: cn(
           "font-medium select-none",
           captionLayout === "label"
@@ -99,7 +91,8 @@ function Calendar({
           "relative isolate z-0 rounded-r-(--cell-radius) bg-muted after:absolute after:inset-y-0 after:left-0 after:w-4 after:bg-muted"
         ),
         selected: "text-xs font-normal",
-        today: "rounded-(--cell-radius) bg-muted text-foreground data-[selected=true]:rounded-none",
+        today:
+          "rounded-(--cell-radius) bg-muted text-foreground data-[selected=true]:rounded-none",
         outside: "text-muted-foreground aria-selected:text-muted-foreground",
         disabled: "text-muted-foreground opacity-50",
         hidden: "invisible",

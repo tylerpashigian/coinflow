@@ -1,0 +1,16 @@
+{
+  "regions": [
+    { "id": "navigation-rail", "kind": "chrome", "grid": "A0:B9", "note": "fixed light application rail with brand, navigation, and operator account" },
+    { "id": "page-heading", "kind": "text", "grid": "B0:F1", "note": "Admin Home heading and concise payment-activity description" },
+    { "id": "date-control", "kind": "control", "grid": "H0:J1", "note": "date-range selector" },
+    { "id": "metric-strip", "kind": "chrome", "grid": "B1:J2", "note": "three compact operational metric cards" },
+    { "id": "settlement-title", "kind": "text", "grid": "B2:F3", "note": "Settlement trend title and supporting description" },
+    { "id": "settlement-controls", "kind": "control", "grid": "F2:G3", "note": "compact metric switcher" },
+    { "id": "settlement-chart", "kind": "chrome", "grid": "B3:G6", "note": "primary responsive payment settlement chart" },
+    { "id": "supporting-chart", "kind": "chrome", "grid": "G2:J6", "note": "supporting payout chart" },
+    { "id": "payments-table-title", "kind": "text", "grid": "B6:F6", "note": "recent payments title" },
+    { "id": "payouts-table-title", "kind": "text", "grid": "F6:J6", "note": "payout status title" },
+    { "id": "payments-table", "kind": "chrome", "grid": "B7:F9", "note": "recent payments table" },
+    { "id": "payouts-table", "kind": "chrome", "grid": "F7:J9", "note": "payout status table" }
+  ]
+}

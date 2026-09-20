@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-19T00:00:00-05:00",
+  "title": "Design System: Coinflow Merchant Dashboard Application",
+  "extensions": {
+    "colorMeta": {
+      "canvas": { "role": "neutral", "displayName": "Clean Canvas", "canonical": "oklch(1 0 0)", "tonalRamp": ["oklch(0.15 0 0)", "oklch(0.28 0 0)", "oklch(0.42 0 0)", "oklch(0.56 0 0)", "oklch(0.70 0 0)", "oklch(0.82 0 0)", "oklch(0.92 0 0)", "oklch(1 0 0)"] },
+      "ink": { "role": "primary", "displayName": "Ledger Ink", "canonical": "oklch(0.145 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.28 0 0)", "oklch(0.42 0 0)", "oklch(0.56 0 0)", "oklch(0.70 0 0)", "oklch(0.82 0 0)", "oklch(0.92 0 0)", "oklch(0.985 0 0)"] },
+      "surface-muted": { "role": "neutral", "displayName": "Quiet Work Surface", "canonical": "oklch(0.97 0 0)", "tonalRamp": ["oklch(0.86 0 0)", "oklch(0.89 0 0)", "oklch(0.92 0 0)", "oklch(0.94 0 0)", "oklch(0.96 0 0)", "oklch(0.97 0 0)", "oklch(0.985 0 0)", "oklch(1 0 0)"] },
+      "divider": { "role": "neutral", "displayName": "Hairline Divider", "canonical": "oklch(0.922 0 0)", "tonalRamp": ["oklch(0.75 0 0)", "oklch(0.80 0 0)", "oklch(0.85 0 0)", "oklch(0.88 0 0)", "oklch(0.90 0 0)", "oklch(0.922 0 0)", "oklch(0.95 0 0)", "oklch(0.98 0 0)"] },
+      "accent": { "role": "secondary", "displayName": "Field Lavender", "canonical": "oklch(0.95 0.025 285)", "tonalRamp": ["oklch(0.28 0.09 285)", "oklch(0.40 0.12 285)", "oklch(0.52 0.14 285)", "oklch(0.61 0.17 285)", "oklch(0.72 0.12 285)", "oklch(0.84 0.07 285)", "oklch(0.91 0.04 285)", "oklch(0.95 0.025 285)"] },
+      "chart-primary": { "role": "secondary", "displayName": "Lavender Trend", "canonical": "oklch(0.61 0.17 285)", "tonalRamp": ["oklch(0.28 0.09 285)", "oklch(0.40 0.12 285)", "oklch(0.52 0.14 285)", "oklch(0.61 0.17 285)", "oklch(0.72 0.12 285)", "oklch(0.84 0.07 285)", "oklch(0.91 0.04 285)", "oklch(0.95 0.025 285)"] },
+      "chart-secondary": { "role": "tertiary", "displayName": "Plum Trend", "canonical": "oklch(0.54 0.14 305)", "tonalRamp": ["oklch(0.26 0.08 305)", "oklch(0.36 0.11 305)", "oklch(0.45 0.13 305)", "oklch(0.54 0.14 305)", "oklch(0.66 0.11 305)", "oklch(0.78 0.07 305)", "oklch(0.89 0.04 305)", "oklch(0.96 0.02 305)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Figtree Display", "purpose": "Page headings and major summary moments." },
+      "body": { "displayName": "Geist Body", "purpose": "Operational content, controls, and records." }
+    },
+    "shadows": [
+      { "name": "structural-low", "value": "0 1px 2px rgb(0 0 0 / 0.05)", "purpose": "Cards and table shells." }
+    ],
+    "breakpoints": [
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    { "name": "Desktop App Shell", "kind": "nav", "refersTo": "app-shell", "description": "Persistent rail and muted application field for desktop operations work.", "html": "<div class=\"ds-shell\"><aside>Coinflow<br><small>Overview · Purchases · Customers</small></aside><main>Payment activity</main></div>", "css": ".ds-shell{display:grid;grid-template-columns:288px 1fr;min-height:260px;background:color-mix(in oklch,var(--muted,oklch(.97 0 0)) 30%,transparent);font-family:'Geist Variable',sans-serif;color:var(--foreground,oklch(.145 0 0))}.ds-shell aside{padding:24px 16px;border-right:1px solid var(--border,oklch(.922 0 0));background:var(--card,white);font-weight:600}.ds-shell small{display:block;margin-top:20px;color:var(--muted-foreground,oklch(.556 0 0));font-weight:400;line-height:2}.ds-shell main{padding:36px;font:600 24px/30px 'Figtree Variable',sans-serif}" },
+    { "name": "Metric Card", "kind": "card", "refersTo": "metric-card", "description": "Top-level dashboard summary.", "html": "<article class=\"ds-metric\"><span>Payments</span><strong>$82,400</strong><small>Aug 24 – Aug 30</small></article>", "css": ".ds-metric{display:grid;gap:8px;padding:20px;border:1px solid color-mix(in oklch,var(--border,oklch(.922 0 0)) 80%,transparent);border-radius:14px;background:var(--card,white);box-shadow:0 1px 2px rgb(0 0 0 / .05);font-family:'Geist Variable',sans-serif}.ds-metric span,.ds-metric small{color:var(--muted-foreground,oklch(.556 0 0));font-size:14px}.ds-metric strong{font-size:24px;line-height:30px}" },
+    { "name": "Detail Drawer", "kind": "custom", "refersTo": "responsive-detail-drawer", "description": "Focused record inspection without abandoning the table.", "html": "<aside class=\"ds-drawer\"><strong>Payment details</strong><span>Record and processing information.</span></aside>", "css": ".ds-drawer{display:grid;gap:8px;width:min(360px,100%);padding:24px;border-left:1px solid var(--border,oklch(.922 0 0));background:var(--popover,white);box-shadow:-8px 0 24px rgb(0 0 0 / .08);font-family:'Geist Variable',sans-serif}.ds-drawer strong{font-size:18px}.ds-drawer span{color:var(--muted-foreground,oklch(.556 0 0));font-size:14px;line-height:20px}" }
+  ],
+  "narrative": {
+    "northStar": "Operator's Field Guide",
+    "overview": "The application turns the shared system into a focused operations workspace. The persistent desktop rail establishes location without dominating the page; overview metrics, trends, filterable tables, and record drawers each stay within predictable, lightly bounded regions.",
+    "keyCharacteristics": ["Persistent context on desktop, accessible compact navigation on smaller screens.", "Dashboard information moves from summary to trend evidence and drill-down.", "Data tables are dense but contained, scrollable, and visually calm.", "Detail drawers preserve the user’s list context while exposing record depth."],
+    "rules": [
+      { "name": "Quiet Field", "body": "Broad application surfaces stay neutral so record values, status, and selected context remain easy to locate.", "section": "colors" },
+      { "name": "Context-Stays-Put", "body": "Opening a record should add detail through a responsive drawer rather than disorienting users with a context-breaking page transition.", "section": "layout" }
+    ],
+    "dos": ["Do keep the page hierarchy summary-first and investigation-ready.", "Do make table rows and drawers work together as one review flow.", "Do retain an explicit mobile navigation pattern below desktop widths.", "Do use the shared UI package for every reusable visual behavior."],
+    "donts": ["Don't make each dashboard card a new visual language.", "Don't use a detail view that discards the user’s filtered table context.", "Don't introduce app-local styling that conflicts with shared tokens or components."]
+  }
+}

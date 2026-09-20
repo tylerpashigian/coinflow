@@ -1,0 +1,102 @@
+{
+  "tool": "build-phase",
+  "version": 2,
+  "startedAt": "2026-09-18T02:55:17.013Z",
+  "comp": ".impeccable/mocks/operators-field-guide-primary.webp",
+  "direction": "f8c687ba",
+  "breakpoint": "1504x1046",
+  "artifact": null,
+  "phase": "hero",
+  "phases": {
+    "comps": {
+      "status": "closed",
+      "openedAt": "2026-09-18T02:55:17.013Z",
+      "closedAt": "2026-09-18T02:57:30.029Z",
+      "attempts": 2,
+      "notes": [],
+      "gate": {
+        "ok": true,
+        "reasons": [],
+        "summary": "3 comps, 1 approved",
+        "approved": ".impeccable/mocks/operators-field-guide-primary.webp",
+        "at": "2026-09-18T02:57:30.029Z"
+      },
+      "forced": null
+    },
+    "spec": {
+      "status": "closed",
+      "openedAt": "2026-09-18T02:57:30.074Z",
+      "closedAt": "2026-09-18T02:58:32.372Z",
+      "attempts": 3,
+      "notes": [],
+      "gate": {
+        "ok": true,
+        "reasons": [],
+        "summary": "12 regions, 0 plates, 4 text regions measured",
+        "at": "2026-09-18T02:58:32.372Z"
+      },
+      "forced": null
+    },
+    "plates": {
+      "status": "closed",
+      "openedAt": "2026-09-18T02:58:32.372Z",
+      "closedAt": "2026-09-18T02:58:36.815Z",
+      "attempts": 1,
+      "notes": [],
+      "gate": {
+        "ok": true,
+        "reasons": [],
+        "summary": "no plates owed",
+        "at": "2026-09-18T02:58:36.815Z"
+      },
+      "forced": null
+    },
+    "hero": {
+      "status": "open",
+      "openedAt": "2026-09-18T02:58:36.815Z",
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "sections": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "motion": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "responsive": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "review": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    }
+  },
+  "finish": null,
+  "plates": {}
+}

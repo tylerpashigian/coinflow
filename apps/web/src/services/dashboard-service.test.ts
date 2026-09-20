@@ -34,7 +34,9 @@ describe("getDashboardOverview", () => {
             payoutCount: 1,
           },
           paymentSeries: [],
+          paymentBreakdown: [],
           payoutSeries: [],
+          payoutBreakdown: [],
         })
       )
     )

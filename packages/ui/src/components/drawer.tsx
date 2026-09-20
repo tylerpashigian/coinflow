@@ -17,6 +17,8 @@ export interface DrawerProps {
   actions?: readonly OverlayAction[]
   placement?: "detail" | "navigation"
   density?: "compact" | "comfortable"
+  /** Wider detail surface for record investigation; navigation keeps its standard width. */
+  size?: "default" | "wide"
   headerVisibility?: "visible" | "accessible"
   initialFocus?: "content" | "search"
   "data-testid"?: string
@@ -32,6 +34,7 @@ export function Drawer({
   actions,
   placement = "detail",
   density = "comfortable",
+  size = "default",
   headerVisibility = "visible",
   initialFocus = "content",
   "data-testid": testId,
@@ -98,6 +101,11 @@ export function Drawer({
       )}
       <P.DrawerContent
         data-testid={testId}
+        className={
+          size === "wide" && placement === "detail"
+            ? "sm:[--drawer-content-width:34rem]"
+            : undefined
+        }
         initialFocus={() =>
           initialFocus === "search"
             ? (content.current?.querySelector<HTMLInputElement>(
@@ -113,7 +121,7 @@ export function Drawer({
           )}
         </P.DrawerHeader>
         {(placement === "navigation" || desktopDetail) && (
-          <div className="absolute top-4 right-4 z-10">
+          <div className="absolute top-5 right-5 z-10">
             <P.DrawerClose
               aria-label={`Close ${title.toLowerCase()}`}
               className={buttonVariants({ variant: "ghost", size: "icon" })}
@@ -127,8 +135,8 @@ export function Drawer({
           tabIndex={-1}
           className={
             density === "compact"
-              ? "min-h-0 flex-1 overflow-y-auto p-2 outline-none"
-              : "min-h-0 flex-1 overflow-y-auto p-4 outline-none"
+              ? "min-h-0 flex-1 overflow-y-auto p-3 outline-none"
+              : "min-h-0 flex-1 overflow-y-auto p-5 outline-none"
           }
         >
           {children}

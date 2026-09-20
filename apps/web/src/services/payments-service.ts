@@ -10,6 +10,7 @@ function isPayment(value: unknown): value is Payment {
     typeof payment.amount === "number" &&
     typeof payment.createdAt === "string" &&
     typeof payment.customerName === "string" &&
+    typeof payment.transactionReference === "string" &&
     typeof payment.merchantName === "string" &&
     typeof payment.status === "string" &&
     typeof payment.processor === "string"
@@ -37,3 +38,17 @@ export async function getPayment(id: string): Promise<Payment> {
   if (!response.ok) throw new Error("Unable to load payment")
   return parsePaymentResponse(response)
 }
+
+async function mutatePayment(id: string, action: "refund" | "fraud-report") {
+  const response = await fetch(`/api/payments/${id}/${action}`, {
+    method: "POST",
+  })
+  if (!response.ok)
+    throw new Error(
+      `Unable to ${action === "refund" ? "refund payment" : "report payment"}`
+    )
+  return parsePaymentResponse(response)
+}
+export const refundPayment = (id: string) => mutatePayment(id, "refund")
+export const reportPaymentFraud = (id: string) =>
+  mutatePayment(id, "fraud-report")

@@ -10,14 +10,14 @@ import {
 } from "@workspace/ui/components/date-range-picker"
 import { FormField } from "@workspace/ui/components/field"
 import { Text } from "@workspace/ui/components/text"
+import { Drawer } from "@workspace/ui/components/drawer"
 import { CustomerDetails } from "@/components/customer-details"
 import { PageFeedback } from "@/components/page-feedback"
-import { ResponsiveDetailDrawer } from "@/components/responsive-detail-drawer"
 import type { Customer } from "@/data/models/customer"
 import { useCustomers } from "@/hooks/use-customers"
 import { useStablePending } from "@/hooks/use-stable-pending"
 import { filterByDateRange } from "@/lib/filter-by-date-range"
-import { formatShortDate } from "@/lib/format"
+import { formatSentence, formatShortDate } from "@/lib/format"
 
 const columns: readonly TableColumn[] = [
   { id: "createdAt", label: "Created", initialDirection: "descending" },
@@ -43,7 +43,7 @@ function tableRow(row: Customer): TableRowData {
       { text: String(row.name) },
       { text: String(row.email) },
       {
-        text: row.protection.replaceAll("_", " "),
+        text: formatSentence(row.protection),
         badge: row.protection === "approved" ? "success" : "outline",
       },
       {
@@ -51,13 +51,18 @@ function tableRow(row: Customer): TableRowData {
         badge: row.blocked ? "destructive" : "success",
       },
       {
-        text: row.threeDSProcessing.replaceAll("_", " "),
+        text: formatSentence(row.threeDSProcessing),
         badge: row.threeDSProcessing === "enabled" ? "info" : "outline",
       },
       { text: String(row.attemptLimit), sortValue: row.attemptLimit },
       {
-        text: row.verification.replaceAll("_", " "),
-        badge: row.verification === "not_found" ? "warning" : "info",
+        text: formatSentence(row.verification),
+        badge:
+          row.verification === "enforced"
+            ? "success"
+            : row.verification === "pending"
+              ? "warning"
+              : "outline",
       },
     ],
   }
@@ -66,12 +71,14 @@ function tableRow(row: Customer): TableRowData {
 type CustomersPageProps = {
   onCloseDetail: () => void
   onSelectCustomer: (customer: Customer) => void
+  onViewRelatedPayments: (customer: Customer) => void
   selectedCustomer?: Customer | null
 }
 
 export function CustomersPage({
   onCloseDetail,
   onSelectCustomer,
+  onViewRelatedPayments,
   selectedCustomer,
 }: CustomersPageProps) {
   const customers = useCustomers()
@@ -96,46 +103,64 @@ export function CustomersPage({
   )
 
   return (
-    <section className="p-5 md:p-9">
-      <div className="mb-8">
-        <Text role="heading" headingLevel={2} variant="heading">
-          Customers
-        </Text>
-        <Text tone="muted">
-          Review customer records, activity, and saved methods.
-        </Text>
-      </div>
-      <div className="mb-4">
-        <FormField label="Customer date range">
-          <DateRangePicker
-            defaultMonth={latestCustomerDate}
-            onValueChange={setDateRange}
-            value={dateRange}
-          />
-        </FormField>
-      </div>
+    <section className="mx-auto max-w-[112rem] p-6 md:p-10">
+      <header className="mb-7 grid gap-6 border-b border-border pb-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="min-w-0 space-y-1">
+          <Text role="heading" headingLevel={2} variant="heading">
+            Customers
+          </Text>
+          <Text tone="muted">
+            Review customer records, activity, and saved methods.
+          </Text>
+          <Text variant="caption" tone="muted">
+            {`Showing ${filteredCustomers.length} customer records`}
+          </Text>
+        </div>
+        <div className="w-full sm:w-auto lg:pb-0.5">
+          <FormField label="Customer date range" labelVisuallyHidden>
+            <DateRangePicker
+              defaultMonth={latestCustomerDate}
+              onValueChange={setDateRange}
+              value={dateRange}
+            />
+          </FormField>
+        </div>
+      </header>
       <DataTable
         ariaLabel="Customers"
+        activeRowId={selectedCustomer?.id}
         columns={columns}
         rows={filteredCustomers.map(tableRow)}
+        density="compact"
+        pinLeadingColumn
         defaultSorting={{ column: "createdAt", direction: "descending" }}
         onRowActivate={(id) => {
           const row = filteredCustomers.find((row) => row.id === id)
           if (row) onSelectCustomer(row)
         }}
       />
-      <ResponsiveDetailDrawer
+      <Drawer
         open={selectedCustomer !== undefined}
         onOpenChange={(open) => !open && onCloseDetail()}
         title="Customer details"
         description="Customer identity, activity, and saved payment methods."
+        placement="detail"
+        size="wide"
+        data-testid="responsive-detail-drawer"
       >
         {selectedCustomer ? (
-          <CustomerDetails customer={selectedCustomer} />
+          <CustomerDetails
+            key={selectedCustomer.id}
+            customer={selectedCustomer}
+            onCustomerUpdated={async () => {
+              await customers.refresh()
+            }}
+            onViewRelatedPayments={onViewRelatedPayments}
+          />
         ) : (
           <Text tone="muted">This customer could not be found.</Text>
         )}
-      </ResponsiveDetailDrawer>
+      </Drawer>
     </section>
   )
 }

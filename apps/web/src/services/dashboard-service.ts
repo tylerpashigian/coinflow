@@ -1,4 +1,5 @@
 import type {
+  DashboardBreakdownSeries,
   DashboardSeriesPoint,
   DashboardOverview,
   DashboardQuery,
@@ -28,6 +29,16 @@ function isSeriesPoint(value: unknown): value is DashboardSeriesPoint {
   )
 }
 
+function isBreakdownSeries(value: unknown): value is DashboardBreakdownSeries {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    typeof value.label === "string" &&
+    Array.isArray(value.points) &&
+    value.points.every(isSeriesPoint)
+  )
+}
+
 function isDashboardOverview(value: unknown): value is DashboardOverview {
   if (!isRecord(value) || !isRecord(value.summaries)) return false
 
@@ -41,8 +52,12 @@ function isDashboardOverview(value: unknown): value is DashboardOverview {
     isNumber(summaries.payouts) &&
     Array.isArray(value.paymentSeries) &&
     value.paymentSeries.every(isSeriesPoint) &&
+    Array.isArray(value.paymentBreakdown) &&
+    value.paymentBreakdown.every(isBreakdownSeries) &&
     Array.isArray(value.payoutSeries) &&
-    value.payoutSeries.every(isSeriesPoint)
+    value.payoutSeries.every(isSeriesPoint) &&
+    Array.isArray(value.payoutBreakdown) &&
+    value.payoutBreakdown.every(isBreakdownSeries)
   )
 }
 

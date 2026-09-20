@@ -75,7 +75,7 @@ function NavigationContent({
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex items-center gap-2 px-3">
-        <div className="grid size-8 place-items-center rounded-lg bg-foreground text-sm font-bold text-white">
+        <div className="grid size-8 place-items-center rounded-lg bg-accent text-sm font-bold text-accent-foreground shadow-sm">
           C
         </div>
         <Text role="inline" size="lg" weight="semibold">
@@ -107,7 +107,7 @@ function NavigationContent({
           />
         </FormField>
       </div>
-      <nav aria-label="Primary" className="mt-6 flex min-h-0 flex-1 flex-col">
+      <nav aria-label="Primary" className="mt-8 flex min-h-0 flex-1 flex-col">
         <div className="shrink-0 space-y-1">
           {primaryNavigation.map((item) => (
             <NavigationItem
@@ -117,7 +117,7 @@ function NavigationContent({
             />
           ))}
         </div>
-        <div className="mt-6 flex min-h-0 flex-1 flex-col">
+        <div className="mt-7 flex min-h-0 flex-1 flex-col">
           <div className="mb-2 shrink-0 px-3">
             <Text
               role="paragraph"
@@ -141,8 +141,8 @@ function NavigationContent({
           </div>
         </div>
       </nav>
-      <div className="mt-5 flex shrink-0 items-center gap-3 border-t border-border px-3 pt-5 dark:border-border">
-        <div className="grid size-8 place-items-center rounded-full bg-muted-foreground text-sm font-semibold text-muted">
+      <div className="mt-6 flex shrink-0 items-center gap-3 border-t border-border px-3 pt-5 dark:border-border">
+        <div className="grid size-8 place-items-center rounded-full bg-accent text-sm font-semibold text-accent-foreground">
           {user.status === "ready" ? user.user.name.slice(0, 1) : "B"}
         </div>
         <div className="min-w-0">
@@ -161,7 +161,7 @@ function NavigationContent({
 function pageTitle(pathname: string) {
   if (pathname.startsWith("/purchases")) return "Purchases"
   if (pathname.startsWith("/customers")) return "Customers"
-  return "Overview"
+  return "Operator overview"
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -190,8 +190,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   })
 
   return (
-    <div className="min-h-svh bg-muted/30 dark:bg-background">
-      <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-border bg-white px-4 lg:hidden dark:bg-card">
+    <div className="min-h-svh bg-muted/45 dark:bg-background">
+      <header className="sticky top-0 z-40 flex h-15 items-center gap-3 border-b border-border bg-background/95 px-5 backdrop-blur-sm lg:hidden dark:bg-card/95">
         <Drawer
           title="Navigation"
           placement="navigation"
@@ -207,14 +207,14 @@ export function AppShell({ children }: { children: ReactNode }) {
             user={user}
           />
         </Drawer>
-        <div className="grid size-7 place-items-center rounded-lg bg-foreground text-xs font-bold text-white">
+        <div className="grid size-7 place-items-center rounded-lg bg-accent text-xs font-bold text-accent-foreground">
           C
         </div>
         <Text role="inline" weight="semibold">
           {pageTitle(pathname)}
         </Text>
       </header>
-      <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-border bg-white px-4 py-6 lg:flex lg:flex-col dark:bg-card">
+      <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-border bg-background px-5 py-7 lg:flex lg:flex-col dark:bg-card">
         <NavigationContent searchRef={desktopSearchRef} user={user} />
       </aside>
       <main className="lg:pl-72">{children}</main>

@@ -10,14 +10,14 @@ import {
 } from "@workspace/ui/components/date-range-picker"
 import { FormField } from "@workspace/ui/components/field"
 import { Text } from "@workspace/ui/components/text"
+import { Drawer } from "@workspace/ui/components/drawer"
 import { PaymentDetails } from "@/components/payment-details"
 import { PageFeedback } from "@/components/page-feedback"
-import { ResponsiveDetailDrawer } from "@/components/responsive-detail-drawer"
 import type { Payment } from "@/data/models/payment"
 import { usePayments } from "@/hooks/use-payments"
 import { useStablePending } from "@/hooks/use-stable-pending"
 import { filterByDateRange } from "@/lib/filter-by-date-range"
-import { formatCurrency, formatShortDate } from "@/lib/format"
+import { formatCurrency, formatSentence, formatShortDate } from "@/lib/format"
 
 const columns: readonly TableColumn[] = [
   { id: "createdAt", label: "Date", initialDirection: "descending" },
@@ -47,15 +47,20 @@ function tableRow(row: Payment): TableRowData {
       { text: formatCurrency(row.amount), sortValue: row.amount },
       { text: String(row.customerName) },
       {
-        text: row.status.replaceAll("_", " "),
-        badge: row.status === "settled" ? "success" : "destructive",
+        text: formatSentence(row.status),
+        badge:
+          row.status === "settled"
+            ? "success"
+            : row.status === "refunded"
+              ? "info"
+              : "destructive",
       },
       {
-        text: row.protection.replaceAll("_", " "),
+        text: formatSentence(row.protection),
         badge: row.protection === "approved" ? "success" : "outline",
       },
       {
-        text: row.threeDS.replaceAll("_", " "),
+        text: formatSentence(row.threeDS),
         badge: row.threeDS === "passed" ? "success" : "outline",
       },
     ],
@@ -63,14 +68,18 @@ function tableRow(row: Payment): TableRowData {
 }
 
 type PurchasesPageProps = {
+  customerId?: string
   onCloseDetail: () => void
   onSelectPayment: (payment: Payment) => void
+  onViewCustomer: (customerId: string) => void
   selectedPayment?: Payment | null
 }
 
 export function PurchasesPage({
+  customerId,
   onCloseDetail,
   onSelectPayment,
+  onViewCustomer,
   selectedPayment,
 }: PurchasesPageProps) {
   const payments = usePayments()
@@ -87,50 +96,76 @@ export function PurchasesPage({
   if (payments.status === "error")
     return <PageFeedback message="Unable to load purchases." status="error" />
 
-  const filteredPayments = filterByDateRange(payments.data, dateRange)
+  const filteredPayments = filterByDateRange(payments.data, dateRange).filter(
+    (payment) => !customerId || payment.customerId === customerId
+  )
+  const relatedCustomer = customerId
+    ? payments.data.find((payment) => payment.customerId === customerId)
+    : undefined
   const latestPaymentDate = new Date(
     Math.max(...payments.data.map((payment) => Date.parse(payment.createdAt)))
   )
 
   return (
-    <section className="p-5 md:p-9">
-      <div className="mb-8">
-        <Text role="heading" headingLevel={2} variant="heading">
-          Purchases
-        </Text>
-        <Text tone="muted">Review payments and processing outcomes.</Text>
-      </div>
-      <div className="mb-4">
-        <FormField label="Purchase date range">
-          <DateRangePicker
-            defaultMonth={latestPaymentDate}
-            onValueChange={setDateRange}
-            value={dateRange}
-          />
-        </FormField>
-      </div>
+    <section className="mx-auto max-w-[112rem] p-6 md:p-10">
+      <header className="mb-7 grid gap-6 border-b border-border pb-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="min-w-0 space-y-1">
+          <Text role="heading" headingLevel={2} variant="heading">
+            Purchases
+          </Text>
+          <Text tone="muted">Review payments and processing outcomes.</Text>
+          {relatedCustomer ? (
+            <Text variant="caption" tone="muted">
+              {`Filtered to ${relatedCustomer.customerName}`}
+            </Text>
+          ) : null}
+          <Text variant="caption" tone="muted">
+            {`Showing ${filteredPayments.length} payment records`}
+          </Text>
+        </div>
+        <div className="w-full sm:w-auto lg:pb-0.5">
+          <FormField label="Purchase date range" labelVisuallyHidden>
+            <DateRangePicker
+              defaultMonth={latestPaymentDate}
+              onValueChange={setDateRange}
+              value={dateRange}
+            />
+          </FormField>
+        </div>
+      </header>
       <DataTable
         ariaLabel="Purchases"
+        activeRowId={selectedPayment?.id}
         columns={columns}
         rows={filteredPayments.map(tableRow)}
+        density="compact"
+        pinLeadingColumn
         defaultSorting={{ column: "createdAt", direction: "descending" }}
         onRowActivate={(id) => {
           const row = filteredPayments.find((row) => row.id === id)
           if (row) onSelectPayment(row)
         }}
       />
-      <ResponsiveDetailDrawer
+      <Drawer
         open={selectedPayment !== undefined}
         onOpenChange={(open) => !open && onCloseDetail()}
         title="Payment details"
         description="Payment record and processing information."
+        placement="detail"
+        size="wide"
+        data-testid="responsive-detail-drawer"
       >
         {selectedPayment ? (
-          <PaymentDetails payment={selectedPayment} />
+          <PaymentDetails
+            key={selectedPayment.id}
+            payment={selectedPayment}
+            onPaymentUpdated={payments.refresh}
+            onViewCustomer={onViewCustomer}
+          />
         ) : (
           <Text tone="muted">This purchase could not be found.</Text>
         )}
-      </ResponsiveDetailDrawer>
+      </Drawer>
     </section>
   )
 }

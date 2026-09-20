@@ -7,10 +7,14 @@ const processors = ["Adyen", "Stripe"] as const
 
 /** Immutable payment builder shared by mock fixtures and tests. */
 export function paymentBuilder(overrides: Partial<Payment> = {}) {
+  const id =
+    overrides.id ??
+    `pay_${faker.string.alphanumeric({ length: 10, casing: "upper" })}`
   const amount = faker.number.int({ min: 1_000, max: 50_000 })
   const fee = Math.round(amount * faker.number.float({ min: 0.02, max: 0.04 }))
   const payment: Payment = {
-    id: `pay_${faker.string.alphanumeric({ length: 10, casing: "upper" })}`,
+    id,
+    transactionReference: `txn_${id.slice(4)}`,
     customerId: `cus_${faker.string.alphanumeric({ length: 10, casing: "lower" })}`,
     customerName: faker.person.fullName(),
     merchantName: faker.company.name(),
@@ -21,6 +25,8 @@ export function paymentBuilder(overrides: Partial<Payment> = {}) {
     processor: faker.helpers.arrayElement(processors),
     orchestrationResult: faker.helpers.arrayElement(["optimized", "routed"]),
     status: faker.helpers.arrayElement(["settled", "failed"]),
+    reviewState: "clear",
+    events: [],
     protection: faker.helpers.arrayElement(["approved", "not_required"]),
     threeDS: faker.helpers.arrayElement(["passed", "not_requested"]),
     fee,

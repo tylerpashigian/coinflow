@@ -1,35 +1,40 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import { ResponsiveDetailDrawer } from "./responsive-detail-drawer"
+import { Drawer } from "@workspace/ui/components/drawer"
 
 function renderDetailDrawer(onOpenChange = vi.fn()) {
   render(
-    <ResponsiveDetailDrawer
+    <Drawer
       description="Payment record and processing information."
       onOpenChange={onOpenChange}
       open
       title="Payment details"
     >
       Payment content
-    </ResponsiveDetailDrawer>
+    </Drawer>
   )
 
   return onOpenChange
 }
 
-describe("ResponsiveDetailDrawer", () => {
+describe("shared detail Drawer", () => {
   it("shows a swipe handle on mobile", async () => {
     renderDetailDrawer()
 
     await screen.findByRole("dialog", { name: "Payment details" })
-    expect(document.querySelector("[data-slot=drawer-swipe-handle]")).toBeVisible()
+    expect(
+      document.querySelector("[data-slot=drawer-swipe-handle]")
+    ).toBeVisible()
     expect(
       screen.queryByRole("button", { name: "Close payment details" })
     ).toBeNull()
   })
 
   it("shows a close button on desktop", async () => {
-    const originalMatchMedia = Object.getOwnPropertyDescriptor(window, "matchMedia")
+    const originalMatchMedia = Object.getOwnPropertyDescriptor(
+      window,
+      "matchMedia"
+    )
     const mediaQuery = {
       addEventListener: () => undefined,
       matches: true,
@@ -47,7 +52,9 @@ describe("ResponsiveDetailDrawer", () => {
         name: "Close payment details",
       })
 
-      expect(document.querySelector("[data-slot=drawer-swipe-handle]")).toBeNull()
+      expect(
+        document.querySelector("[data-slot=drawer-swipe-handle]")
+      ).toBeNull()
       fireEvent.click(closeButton)
       await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false))
     } finally {
