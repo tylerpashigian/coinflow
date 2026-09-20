@@ -1,7 +1,31 @@
-import { useEffect, useId, useRef, useState } from "react"
-import { Checkbox } from "../private/checkbox"
-import { cn } from "cn"
+import { useMemo, useState } from "react"
+import {
+  createSortedRowModel,
+  rowSelectionFeature,
+  rowSortingFeature,
+  tableFeatures,
+  useTable,
+  type ColumnDef,
+  type RowSelectionState,
+  type SortingState,
+  type Updater,
+} from "@tanstack/react-table"
 import { Badge, type BadgeVariant } from "./badge"
+import { Checkbox } from "../private/checkbox"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./table"
+
+const dataTableFeatures = tableFeatures({
+  rowSelectionFeature,
+  rowSortingFeature,
+  sortedRowModel: createSortedRowModel(),
+})
 
 export interface TableCellValue {
   text: string
@@ -34,17 +58,61 @@ export interface DataTableProps {
   sorting?: TableSort | null
   defaultSorting?: TableSort
   onSortingChange?: (sorting: TableSort | null) => void
-  selection?: "none" | "single" | "multiple"
+  /** Enables checkbox row selection. */
+  selectType?: "single" | "multi"
+  /** Controlled selected row IDs. */
   selectedIds?: readonly string[]
+  /** Initial selected row IDs when selection is uncontrolled. */
   defaultSelectedIds?: readonly string[]
+  /** Called with selected row IDs in the current table order. */
+  onSelectionChange?: (ids: string[]) => void
   /** Highlights the record currently open in contextual detail. */
   activeRowId?: string
   /** Keeps the leading context column visible while a wide table scrolls. */
   pinLeadingColumn?: boolean
   /** Announces horizontal overflow only when it is actually present. */
   overflowHint?: string
-  onSelectionChange?: (ids: string[]) => void
   "data-testid"?: string
+}
+
+function toSortingState(sorting: TableSort | null): SortingState {
+  return sorting
+    ? [{ id: sorting.column, desc: sorting.direction === "descending" }]
+    : []
+}
+
+function toTableSort(sorting: SortingState): TableSort | null {
+  const [first] = sorting
+  return first
+    ? {
+        column: first.id,
+        direction: first.desc ? "descending" : "ascending",
+      }
+    : null
+}
+
+function toRowSelectionState(
+  ids: readonly string[],
+  selectType: DataTableProps["selectType"]
+): RowSelectionState {
+  if (!selectType) return {}
+
+  const selection: RowSelectionState = {}
+  for (const id of ids) {
+    selection[id] = true
+    if (selectType === "single") break
+  }
+  return selection
+}
+
+function toSelectedIds(
+  selection: RowSelectionState,
+  orderedRowIds: readonly string[]
+) {
+  const selectedIds = Object.keys(selection).filter((id) => selection[id])
+  const selectedIdSet = new Set(selectedIds)
+  const orderedIds = orderedRowIds.filter((id) => selectedIdSet.delete(id))
+  return [...orderedIds, ...selectedIds.filter((id) => selectedIdSet.has(id))]
 }
 
 export function DataTable({
@@ -57,247 +125,248 @@ export function DataTable({
   sorting,
   defaultSorting,
   onSortingChange,
-  selection = "none",
+  selectType,
   selectedIds,
   defaultSelectedIds = [],
+  onSelectionChange,
   activeRowId,
   pinLeadingColumn = false,
   overflowHint = "Scroll horizontally to view remaining columns.",
-  onSelectionChange,
   "data-testid": testId,
 }: DataTableProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const overflowHintId = useId()
-  const [hasHorizontalOverflow, setHasHorizontalOverflow] = useState(false)
   const [localSort, setLocalSort] = useState<TableSort | null>(
     defaultSorting ?? null
   )
-  const [localSelection, setLocalSelection] =
-    useState<readonly string[]>(defaultSelectedIds)
+  const [localSelectedIds, setLocalSelectedIds] = useState<readonly string[]>(
+    selectType === "single"
+      ? defaultSelectedIds.slice(0, 1)
+      : defaultSelectedIds
+  )
   const sort = sorting === undefined ? localSort : sorting
-  const selected = selectedIds ?? localSelection
-  const columnIndex = sort
-    ? columns.findIndex((column) => column.id === sort.column)
-    : -1
-  const visibleRows =
-    columnIndex < 0
-      ? rows
-      : [...rows].sort((a, b) => {
+  const selected = selectedIds ?? localSelectedIds
+  const tanstackSorting = useMemo(() => toSortingState(sort), [sort])
+  const tanstackSelection = useMemo(
+    () => toRowSelectionState(selected, selectType),
+    [selectType, selected]
+  )
+  const tableColumns = useMemo(
+    () =>
+      columns.map((column, index) => ({
+        id: column.id,
+        header: column.label,
+        accessorFn: (row: TableRowData) =>
+          row.cells[index]?.sortValue ?? row.cells[index]?.text ?? "",
+        enableSorting: column.sortable !== false,
+        enableMultiSort: false,
+        sortDescFirst: column.initialDirection === "descending",
+        sortUndefined: false,
+        sortFn: (rowA, rowB) => {
           const av =
-            a.cells[columnIndex]?.sortValue ?? a.cells[columnIndex]?.text ?? ""
+            rowA.original.cells[index]?.sortValue ??
+            rowA.original.cells[index]?.text ??
+            ""
           const bv =
-            b.cells[columnIndex]?.sortValue ?? b.cells[columnIndex]?.text ?? ""
-          const result =
-            typeof av === "number" && typeof bv === "number"
-              ? av - bv
-              : String(av).localeCompare(String(bv))
-          return sort?.direction === "descending" ? -result : result
-        })
-  const toggleSort = (column: TableColumn) => {
-    const first = column.initialDirection ?? "ascending"
-    const next: TableSort | null =
-      sort?.column !== column.id
-        ? { column: column.id, direction: first }
-        : sort.direction === first
-          ? {
-              column: column.id,
-              direction: first === "ascending" ? "descending" : "ascending",
-            }
-          : null
-    setLocalSort(next)
-    onSortingChange?.(next)
-  }
-  const toggleSelection = (row: TableRowData) => {
-    const next = selected.includes(row.id)
-      ? selected.filter((id) => id !== row.id)
-      : selection === "single"
-        ? [row.id]
-        : [...selected, row.id]
-    setLocalSelection(next)
-    onSelectionChange?.(next)
-  }
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-    const updateOverflow = () =>
-      setHasHorizontalOverflow(
-        container.scrollWidth > container.clientWidth + 1
+            rowB.original.cells[index]?.sortValue ??
+            rowB.original.cells[index]?.text ??
+            ""
+          return typeof av === "number" && typeof bv === "number"
+            ? av - bv
+            : String(av).localeCompare(String(bv))
+        },
+      })) satisfies ColumnDef<typeof dataTableFeatures, TableRowData>[],
+    [columns]
+  )
+  const table = useTable({
+    columns: tableColumns,
+    data: rows,
+    enableRowRangeSelection: false,
+    enableRowSelection: (row) => Boolean(selectType) && !row.original.disabled,
+    enableMultiRowSelection: selectType === "multi",
+    enableSubRowSelection: false,
+    enableMultiSort: false,
+    enableSortingRemoval: true,
+    features: dataTableFeatures,
+    getRowId: (row) => row.id,
+    onSortingChange: (updater: Updater<SortingState>) => {
+      const next =
+        typeof updater === "function" ? updater(tanstackSorting) : updater
+      const nextSort = toTableSort(next)
+      if (sorting === undefined) setLocalSort(nextSort)
+      onSortingChange?.(nextSort)
+    },
+    onRowSelectionChange: (updater: Updater<RowSelectionState>) => {
+      const next =
+        typeof updater === "function" ? updater(tanstackSelection) : updater
+      const nextIds = toSelectedIds(
+        next,
+        table.getRowModel().rows.map((row) => row.id)
       )
-    updateOverflow()
-    const observer =
-      typeof ResizeObserver === "undefined"
-        ? undefined
-        : new ResizeObserver(updateOverflow)
-    observer?.observe(container)
-    window.addEventListener("resize", updateOverflow)
-    return () => {
-      observer?.disconnect()
-      window.removeEventListener("resize", updateOverflow)
-    }
-  }, [columns, rows])
+      const constrainedIds =
+        selectType === "single" ? nextIds.slice(0, 1) : nextIds
+      if (selectedIds === undefined) setLocalSelectedIds(constrainedIds)
+      onSelectionChange?.(constrainedIds)
+    },
+    state: { rowSelection: tanstackSelection, sorting: tanstackSorting },
+  })
+
+  const hasSelectableRows = table
+    .getRowModel()
+    .rows.some((row) => row.getCanSelect())
+
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full overflow-x-auto rounded-xl border border-border bg-card"
+    <Table
+      ariaLabel={ariaLabel}
+      overflowHint={overflowHint}
+      surface="card"
       data-testid={testId}
     >
-      <table
-        aria-label={ariaLabel}
-        aria-describedby={hasHorizontalOverflow ? overflowHintId : undefined}
-        className="w-full caption-bottom text-sm"
-      >
-        <thead className="border-b border-border bg-muted/45">
-          <tr>
-            {selection !== "none" && (
-              <th scope="col" className="px-4">
-                <span className="sr-only">Selection</span>
-              </th>
-            )}
-            {columns.map((column, index) => (
-              <th
-                key={column.id}
-                scope="col"
-                aria-sort={
-                  sort?.column === column.id
-                    ? sort.direction
-                    : column.sortable === false
-                      ? undefined
-                      : "none"
-                }
-                className={cn(
-                  "h-11 px-4 text-[0.6875rem] font-semibold tracking-wide whitespace-nowrap text-muted-foreground",
-                  pinLeadingColumn &&
-                    index === 0 &&
-                    "sticky left-0 z-20 border-r border-border/70 bg-muted",
-                  column.align === "right"
-                    ? "text-right"
-                    : column.align === "center"
-                      ? "text-center"
-                      : "text-left"
-                )}
-              >
-                {column.sortable === false ? (
-                  column.label
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => toggleSort(column)}
-                    className="inline-flex items-center gap-1 hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
-                  >
-                    {column.label}
-                    <span aria-hidden="true">
-                      {sort?.column === column.id
-                        ? sort.direction === "ascending"
-                          ? "↑"
-                          : "↓"
-                        : "↕"}
-                    </span>
-                  </button>
-                )}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {visibleRows.length ? (
-            visibleRows.map((row) => (
-              <tr
-                key={row.id}
-                aria-selected={
-                  selection !== "none" ? selected.includes(row.id) : undefined
-                }
-                tabIndex={onRowActivate && !row.disabled ? 0 : undefined}
-                aria-disabled={row.disabled || undefined}
-                onClick={() => {
-                  if (!row.disabled) onRowActivate?.(row.id)
-                }}
-                onKeyDown={(event) => {
-                  if (
-                    event.target === event.currentTarget &&
-                    !row.disabled &&
-                    onRowActivate &&
-                    (event.key === "Enter" || event.key === " ")
-                  ) {
-                    event.preventDefault()
-                    onRowActivate(row.id)
-                  }
-                }}
-                className={cn(
-                  "border-b border-border/80 transition-colors last:border-0 hover:bg-muted/70 focus-visible:outline-2 focus-visible:outline-ring",
-                  onRowActivate && !row.disabled && "cursor-pointer",
-                  selected.includes(row.id) && "bg-muted",
-                  activeRowId === row.id &&
-                    "bg-accent text-accent-foreground ring-1 ring-ring/30 ring-inset",
-                  row.disabled && "opacity-50"
-                )}
-              >
-                {selection !== "none" && (
-                  <td
-                    className="px-4"
+      <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+            {selectType ? (
+              <TableHead align="center" selection>
+                {selectType === "multi" ? (
+                  <div
+                    className="flex justify-center"
                     onClick={(event) => event.stopPropagation()}
                   >
                     <Checkbox
-                      aria-label={`Select ${row.id}`}
-                      checked={selected.includes(row.id)}
-                      disabled={row.disabled}
-                      onCheckedChange={() => toggleSelection(row)}
+                      aria-label="Select all rows"
+                      checked={
+                        hasSelectableRows && table.getIsAllRowsSelected()
+                      }
+                      disabled={!hasSelectableRows}
+                      indeterminate={
+                        !table.getIsAllRowsSelected() &&
+                        table.getIsSomeRowsSelected()
+                      }
+                      onCheckedChange={(checked) =>
+                        table.toggleAllRowsSelected(checked)
+                      }
                     />
-                  </td>
+                  </div>
+                ) : (
+                  <span className="sr-only">Selection</span>
                 )}
-                {columns.map((column, index) => (
-                  <td
-                    key={column.id}
-                    className={cn(
-                      "px-4 align-middle whitespace-nowrap",
-                      density === "compact" ? "py-2.5" : "py-3.5",
-                      pinLeadingColumn &&
-                        index === 0 &&
-                        "sticky left-0 z-10 border-r border-border/70",
-                      pinLeadingColumn &&
-                        index === 0 &&
-                        (activeRowId === row.id
-                          ? "bg-accent"
-                          : selected.includes(row.id)
-                            ? "bg-muted"
-                            : "bg-card"),
-                      column.align === "right"
-                        ? "text-right"
-                        : column.align === "center"
-                          ? "text-center"
-                          : "text-left"
-                    )}
-                  >
-                    {row.cells[index]?.badge ? (
-                      <Badge variant={row.cells[index].badge}>
-                        {row.cells[index].text}
-                      </Badge>
-                    ) : (
-                      row.cells[index]?.text
-                    )}
-                  </td>
-                ))}
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td
-                colSpan={columns.length + (selection === "none" ? 0 : 1)}
-                className="h-24 text-center text-muted-foreground"
+              </TableHead>
+            ) : null}
+            {headerGroup.headers.map((header) => {
+              const column = columns.find(
+                (candidate) => candidate.id === header.column.id
+              )
+              const direction = header.column.getIsSorted()
+
+              return (
+                <TableHead
+                  key={header.id}
+                  align={column?.align}
+                  pinned={pinLeadingColumn && header.index === 0}
+                  sort={
+                    direction === "asc"
+                      ? "ascending"
+                      : direction === "desc"
+                        ? "descending"
+                        : column?.sortable === false
+                          ? undefined
+                          : "none"
+                  }
+                >
+                  {column?.sortable === false ? (
+                    column.label
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => header.column.toggleSorting()}
+                      className="inline-flex items-center gap-1 hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+                    >
+                      {column?.label}
+                      <span aria-hidden="true">
+                        {direction === "asc"
+                          ? "↑"
+                          : direction === "desc"
+                            ? "↓"
+                            : "↕"}
+                      </span>
+                    </button>
+                  )}
+                </TableHead>
+              )
+            })}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody>
+        {table.getRowModel().rows.length ? (
+          table.getRowModel().rows.map((row) => {
+            const rowState =
+              activeRowId === row.original.id ? "active" : "default"
+
+            return (
+              <TableRow
+                key={row.id}
+                disabled={row.original.disabled}
+                interactive={onRowActivate !== undefined}
+                onPress={
+                  onRowActivate
+                    ? () => onRowActivate(row.original.id)
+                    : undefined
+                }
+                selected={selectType ? row.getIsSelected() : undefined}
+                state={rowState}
               >
-                {emptyMessage}
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      {hasHorizontalOverflow && (
-        <p
-          className="sticky left-0 border-t border-border/80 bg-muted/45 px-4 py-2.5 text-xs text-muted-foreground"
-          id={overflowHintId}
-        >
-          {overflowHint}
-        </p>
-      )}
-    </div>
+                {selectType ? (
+                  <TableCell align="center" density={density} selection>
+                    <div
+                      className="flex justify-center"
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <Checkbox
+                        aria-label={`Select ${row.original.id}`}
+                        checked={row.getIsSelected()}
+                        disabled={!row.getCanSelect()}
+                        onCheckedChange={(checked) =>
+                          row.toggleSelected(checked)
+                        }
+                      />
+                    </div>
+                  </TableCell>
+                ) : null}
+                {row.getAllCells().map((cell, index) => {
+                  const value = row.original.cells[index]
+
+                  return (
+                    <TableCell
+                      key={cell.id}
+                      align={columns[index]?.align}
+                      density={density}
+                      pinned={pinLeadingColumn && index === 0}
+                      rowState={rowState}
+                      selected={selectType ? row.getIsSelected() : false}
+                    >
+                      {value?.badge ? (
+                        <Badge variant={value.badge}>{value.text}</Badge>
+                      ) : (
+                        value?.text
+                      )}
+                    </TableCell>
+                  )
+                })}
+              </TableRow>
+            )
+          })
+        ) : (
+          <TableRow>
+            <TableCell
+              align="center"
+              colSpan={columns.length + (selectType ? 1 : 0)}
+              density={density}
+              empty
+            >
+              {emptyMessage}
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   )
 }

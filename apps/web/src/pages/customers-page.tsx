@@ -8,6 +8,9 @@ import {
   DateRangePicker,
   type DateRange,
 } from "@workspace/ui/components/date-range-picker"
+import { Button } from "@workspace/ui/components/button"
+import { Toolbar, type ToolbarItem } from "@workspace/ui/components/toolbar"
+import { notify } from "@workspace/ui/components/toast"
 import { FormField } from "@workspace/ui/components/field"
 import { Text } from "@workspace/ui/components/text"
 import { Drawer } from "@workspace/ui/components/drawer"
@@ -83,6 +86,10 @@ export function CustomersPage({
 }: CustomersPageProps) {
   const customers = useCustomers()
   const [dateRange, setDateRange] = useState<DateRange>()
+  const [isEditing, setIsEditing] = useState(false)
+  const [selectedCustomerIds, setSelectedCustomerIds] = useState<
+    readonly string[]
+  >([])
   const showPending = useStablePending(customers.status === "loading")
 
   if (
@@ -101,9 +108,31 @@ export function CustomersPage({
       ...customers.data.map((customer) => Date.parse(customer.createdAt))
     )
   )
+  const hasSelectedCustomers = selectedCustomerIds.length > 0
+  const toolbarItems: readonly ToolbarItem[] = [
+    {
+      id: "clear-selection",
+      icon: "close",
+      label: "Clear selection",
+      onPress: () => setSelectedCustomerIds([]),
+    },
+    {
+      id: "delete-customers",
+      icon: "trash",
+      label: "Delete selected customers",
+      onPress: () => {
+        notify({ type: "success", title: "Mocked delete complete" })
+      },
+      tone: "destructive",
+    },
+  ]
 
   return (
-    <section className="mx-auto max-w-[112rem] p-6 md:p-10">
+    <section
+      className={`mx-auto max-w-[112rem] p-6 md:p-10 ${
+        isEditing && hasSelectedCustomers ? "pb-24 md:pb-28" : ""
+      }`}
+    >
       <header className="mb-7 grid gap-6 border-b border-border pb-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
         <div className="min-w-0 space-y-1">
           <Text role="heading" headingLevel={2} variant="heading">
@@ -116,7 +145,15 @@ export function CustomersPage({
             {`Showing ${filteredCustomers.length} customer records`}
           </Text>
         </div>
-        <div className="w-full sm:w-auto lg:pb-0.5">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-end lg:pb-0.5">
+          <Button
+            label="Edit Customers"
+            onPress={() => {
+              if (isEditing) setSelectedCustomerIds([])
+              setIsEditing((editing) => !editing)
+            }}
+            variant={isEditing ? "secondary" : "outline"}
+          />
           <FormField label="Customer date range" labelVisuallyHidden>
             <DateRangePicker
               defaultMonth={latestCustomerDate}
@@ -131,6 +168,9 @@ export function CustomersPage({
         activeRowId={selectedCustomer?.id}
         columns={columns}
         rows={filteredCustomers.map(tableRow)}
+        selectType={isEditing ? "multi" : undefined}
+        selectedIds={selectedCustomerIds}
+        onSelectionChange={setSelectedCustomerIds}
         density="compact"
         pinLeadingColumn
         defaultSorting={{ column: "createdAt", direction: "descending" }}
@@ -138,6 +178,14 @@ export function CustomersPage({
           const row = filteredCustomers.find((row) => row.id === id)
           if (row) onSelectCustomer(row)
         }}
+      />
+      <Toolbar
+        ariaLabel="Customer bulk actions"
+        items={toolbarItems}
+        open={isEditing && hasSelectedCustomers}
+        summary={`${selectedCustomerIds.length} ${
+          selectedCustomerIds.length === 1 ? "customer" : "customers"
+        } selected`}
       />
       <Drawer
         open={selectedCustomer !== undefined}

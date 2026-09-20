@@ -285,6 +285,20 @@ describe("admin overview", () => {
       expect(
         await screen.findByRole("heading", { name: "Purchases" })
       ).toBeVisible()
+      const editPurchases = screen.getByRole("button", {
+        name: "Edit Purchases",
+      })
+      expect(
+        screen.queryByRole("checkbox", { name: "Select all rows" })
+      ).toBeNull()
+      fireEvent.click(editPurchases)
+      expect(
+        screen.getByRole("checkbox", { name: "Select all rows" })
+      ).toBeVisible()
+      fireEvent.click(editPurchases)
+      expect(
+        screen.queryByRole("checkbox", { name: "Select all rows" })
+      ).toBeNull()
       const purchasesDateFilter = screen.getByRole("button", {
         name: "Purchase date range",
       })
@@ -313,6 +327,40 @@ describe("admin overview", () => {
       expect(
         await screen.findByRole("heading", { name: "Customers" })
       ).toBeVisible()
+      const editCustomers = screen.getByRole("button", {
+        name: "Edit Customers",
+      })
+      expect(
+        screen.queryByRole("checkbox", { name: "Select all rows" })
+      ).toBeNull()
+      fireEvent.click(editCustomers)
+      expect(
+        screen.getByRole("checkbox", { name: "Select all rows" })
+      ).toBeVisible()
+      expect(
+        screen.queryByRole("toolbar", { name: "Customer bulk actions" })
+      ).toBeNull()
+      const novaSelection = screen.getByRole("checkbox", {
+        name: "Select cus_nova",
+      })
+      fireEvent.click(novaSelection)
+      expect(
+        await screen.findByRole("toolbar", { name: "Customer bulk actions" })
+      ).toHaveTextContent("1 customer selected")
+      expect(
+        screen.getByRole("button", { name: "Delete selected customers" })
+      ).toBeEnabled()
+      fireEvent.click(screen.getByRole("button", { name: "Clear selection" }))
+      await waitFor(() =>
+        expect(
+          screen.queryByRole("toolbar", { name: "Customer bulk actions" })
+        ).toBeNull()
+      )
+      expect(novaSelection).toHaveAttribute("aria-checked", "false")
+      fireEvent.click(editCustomers)
+      expect(
+        screen.queryByRole("checkbox", { name: "Select all rows" })
+      ).toBeNull()
       expect(
         screen.getByRole("button", { name: "Customer date range" })
       ).toBeVisible()
