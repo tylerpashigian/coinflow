@@ -156,6 +156,8 @@ Restrained action controls with a compact text-first rhythm.
 - **Secondary / Outline / Ghost:** muted surface, hairline outline, or transparent background; each preserves readable ink text.
 - **Hover / Focus:** hover shifts tonal fill; focus uses the ring token in a two-pixel, low-opacity halo.
 
+**The Provenance Rule.** Every public design-system primitive has a named, one-to-one shadcn foundation. Confirm that mapping with the user before adding or materially changing the primitive. Contextual product compositions belong in `apps/web`; a component without a shadcn equivalent requires an explicitly approved exception.
+
 ### Cards / Containers
 
 Quiet white containers for summaries, records, charts, and contextual detail.
@@ -197,6 +199,7 @@ Badges are small, full-pill semantic markers. They use 10px medium-weight labels
 - **Do** use thin borders and tonal contrast before adding elevation.
 - **Do** reserve semantic hues for status, validation, and data relationships.
 - **Do** preserve a compact responsive path from desktop rail to mobile navigation drawer.
+- **Do** document and confirm the corresponding shadcn component before changing a public primitive.
 
 ### Don't:
 
@@ -204,3 +207,4 @@ Badges are small, full-pill semantic markers. They use 10px medium-weight labels
 - **Don't** apply saturated color to broad page surfaces without a meaningful state or data role.
 - **Don't** expand routine controls into oversized, consumer-app forms.
 - **Don't** make navigation or decorative treatment compete with record data.
+- **Don't** add a custom foundational primitive when the behavior is contextual to the application.

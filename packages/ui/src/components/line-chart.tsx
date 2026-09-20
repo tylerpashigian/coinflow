@@ -1,8 +1,10 @@
 import { useMemo } from "react"
-import { defineChart, lineY } from "@tanstack/charts"
+import { areaY, defineChart, lineY } from "@tanstack/charts"
 import { Chart } from "@tanstack/charts/react"
+import { d3Curve } from "@tanstack/charts/d3/shape"
 import { scaleLinear } from "@tanstack/charts/scales/linear"
 import { scalePoint } from "@tanstack/charts/scales/point"
+import { curveMonotoneX } from "d3-shape"
 
 export interface LineChartPoint {
   label: string
@@ -10,11 +12,7 @@ export interface LineChartPoint {
 }
 
 export type LineChartTone =
-  | "primary"
-  | "secondary"
-  | "tertiary"
-  | "quaternary"
-  | "quinary"
+  "primary" | "secondary" | "tertiary" | "quaternary" | "quinary"
 
 export interface LineChartSeries {
   id: string
@@ -73,25 +71,68 @@ export function LineChart({
   const definition = useMemo(
     () =>
       defineChart({
-        marks: resolvedSeries.map((line, index) =>
-          lineY(line.data, {
-            x: "label",
-            y: "value",
-            stroke: chartColors[
-              line.tone ??
-                (index === 0
-                  ? "primary"
-                  : (["secondary", "tertiary", "quaternary", "quinary"] as const)[
-                      (index - 1) % 4
-                    ])
+        marks: resolvedSeries.flatMap((line, index) => {
+          const lineTone =
+            line.tone ??
+            (index === 0
+              ? "primary"
+              : (["secondary", "tertiary", "quaternary", "quinary"] as const)[
+                  (index - 1) % 4
+                ])
+
+          const color = chartColors[lineTone]
+          const gradientId = `line-chart-${line.id.replace(/[^a-zA-Z0-9_-]/g, "-")}-fill`
+
+          return [
+            areaY(line.data, {
+              x: "label",
+              y1: 0,
+              y2: "value",
+              fill: `url(#${gradientId})`,
+              curve: d3Curve(curveMonotoneX),
+            }),
+            lineY(line.data, {
+              x: "label",
+              y: "value",
+              stroke: color,
+              strokeWidth: 2,
+              points: false,
+              curve: d3Curve(curveMonotoneX),
+            }),
+          ]
+        }),
+        gradients: resolvedSeries.map((line, index) => {
+          const lineTone =
+            line.tone ??
+            (index === 0
+              ? "primary"
+              : (["secondary", "tertiary", "quaternary", "quinary"] as const)[
+                  (index - 1) % 4
+                ])
+
+          const color = chartColors[lineTone]
+          const id = `line-chart-${line.id.replace(/[^a-zA-Z0-9_-]/g, "-")}-fill`
+          const peakOpacity = index === 0 ? 0.42 : 0.24
+
+          return {
+            id,
+            x1: 0,
+            y1: 1,
+            x2: 0,
+            y2: 0,
+            stops: [
+              { offset: 0, color, opacity: 0 },
+              { offset: 0.22, color, opacity: peakOpacity * 0.32 },
+              { offset: 0.62, color, opacity: peakOpacity * 0.72 },
+              { offset: 1, color, opacity: peakOpacity },
             ],
-            points: true,
-          })
-        ),
+          }
+        }),
         scales: {
           x: { scale: scalePoint },
           y: { scale: scaleLinear, nice: true },
         },
+        clip: true,
       }),
     [resolvedSeries]
   )
@@ -100,7 +141,10 @@ export function LineChart({
     <div className="space-y-3">
       <Chart ariaLabel={ariaLabel} definition={definition} height={height} />
       {resolvedSeries.length > 1 && (
-        <ul aria-label={`${ariaLabel} legend`} className="flex flex-wrap gap-x-4 gap-y-2">
+        <ul
+          aria-label={`${ariaLabel} legend`}
+          className="flex flex-wrap gap-x-4 gap-y-2"
+        >
           {resolvedSeries.map((line, index) => {
             const lineTone =
               line.tone ??
@@ -110,7 +154,10 @@ export function LineChart({
                     (index - 1) % 4
                   ])
             return (
-              <li className="flex items-center gap-2 text-xs text-muted-foreground" key={line.id}>
+              <li
+                className="flex items-center gap-2 text-xs text-muted-foreground"
+                key={line.id}
+              >
                 <span
                   aria-hidden="true"
                   className={`size-2 rounded-full ${legendColors[lineTone]}`}

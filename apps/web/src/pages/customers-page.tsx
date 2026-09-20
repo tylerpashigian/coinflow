@@ -57,7 +57,7 @@ function tableRow(row: Customer): TableRowData {
       { text: String(row.attemptLimit), sortValue: row.attemptLimit },
       {
         text: formatSentence(row.verification),
-        badge: row.verification === "not_found" ? "warning" : "info",
+        badge: row.verification === "enforced" ? "success" : "info",
       },
     ],
   }
@@ -66,12 +66,14 @@ function tableRow(row: Customer): TableRowData {
 type CustomersPageProps = {
   onCloseDetail: () => void
   onSelectCustomer: (customer: Customer) => void
+  onViewRelatedPayments: (customer: Customer) => void
   selectedCustomer?: Customer | null
 }
 
 export function CustomersPage({
   onCloseDetail,
   onSelectCustomer,
+  onViewRelatedPayments,
   selectedCustomer,
 }: CustomersPageProps) {
   const customers = useCustomers()
@@ -106,7 +108,7 @@ export function CustomersPage({
             Review customer records, activity, and saved methods.
           </Text>
           <Text variant="caption" tone="muted">
-            Showing {filteredCustomers.length} customer records
+            {`Showing ${filteredCustomers.length} customer records`}
           </Text>
         </div>
         <div className="w-full sm:w-auto">
@@ -142,7 +144,14 @@ export function CustomersPage({
         data-testid="responsive-detail-drawer"
       >
         {selectedCustomer ? (
-          <CustomerDetails customer={selectedCustomer} />
+          <CustomerDetails
+            key={selectedCustomer.id}
+            customer={selectedCustomer}
+            onCustomerUpdated={async () => {
+              await customers.refresh()
+            }}
+            onViewRelatedPayments={onViewRelatedPayments}
+          />
         ) : (
           <Text tone="muted">This customer could not be found.</Text>
         )}

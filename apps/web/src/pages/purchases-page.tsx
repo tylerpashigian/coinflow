@@ -63,14 +63,18 @@ function tableRow(row: Payment): TableRowData {
 }
 
 type PurchasesPageProps = {
+  customerId?: string
   onCloseDetail: () => void
   onSelectPayment: (payment: Payment) => void
+  onViewCustomer: (customerId: string) => void
   selectedPayment?: Payment | null
 }
 
 export function PurchasesPage({
+  customerId,
   onCloseDetail,
   onSelectPayment,
+  onViewCustomer,
   selectedPayment,
 }: PurchasesPageProps) {
   const payments = usePayments()
@@ -87,7 +91,12 @@ export function PurchasesPage({
   if (payments.status === "error")
     return <PageFeedback message="Unable to load purchases." status="error" />
 
-  const filteredPayments = filterByDateRange(payments.data, dateRange)
+  const filteredPayments = filterByDateRange(payments.data, dateRange).filter(
+    (payment) => !customerId || payment.customerId === customerId
+  )
+  const relatedCustomer = customerId
+    ? payments.data.find((payment) => payment.customerId === customerId)
+    : undefined
   const latestPaymentDate = new Date(
     Math.max(...payments.data.map((payment) => Date.parse(payment.createdAt)))
   )
@@ -100,8 +109,13 @@ export function PurchasesPage({
             Purchases
           </Text>
           <Text tone="muted">Review payments and processing outcomes.</Text>
+          {relatedCustomer ? (
+            <Text variant="caption" tone="muted">
+              {`Filtered to ${relatedCustomer.customerName}`}
+            </Text>
+          ) : null}
           <Text variant="caption" tone="muted">
-            Showing {filteredPayments.length} payment records
+            {`Showing ${filteredPayments.length} payment records`}
           </Text>
         </div>
         <div className="w-full sm:w-auto">
@@ -137,7 +151,12 @@ export function PurchasesPage({
         data-testid="responsive-detail-drawer"
       >
         {selectedPayment ? (
-          <PaymentDetails payment={selectedPayment} />
+          <PaymentDetails
+            key={selectedPayment.id}
+            payment={selectedPayment}
+            onPaymentUpdated={payments.refresh}
+            onViewCustomer={onViewCustomer}
+          />
         ) : (
           <Text tone="muted">This purchase could not be found.</Text>
         )}

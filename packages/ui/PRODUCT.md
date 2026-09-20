@@ -28,6 +28,7 @@ The package is consumed by `apps/web` through explicit `@workspace/ui/components
 - Product code supplies content, state, and domain behavior. The UI package owns markup, styling, primitive configuration, positioning, focus management, and responsive component behavior.
 - The system includes light and dark themes and uses Geist Variable and Figtree Variable fonts.
 - New visual decisions require an explicit named API, documentation, contract coverage, behavior tests where relevant, and reviewed browser screenshots.
+- Every new or materially changed public primitive must map one-to-one to a named shadcn component; record that foundation before implementation and obtain explicit user confirmation. Do not invent a custom primitive where shadcn has no equivalent—leave contextual composition in the consuming app unless the user approves a documented exception. The existing TanStack Charts integration is an approved exception.
 
 ## Brand Commitments
 
@@ -46,4 +47,3 @@ The shared system supports a take-home interview redesign based on Coinflow’s 
 - Keep the system/application boundary explicit and enforceable.
 - Preserve accessibility and responsive behavior as component responsibilities.
 - Treat real-product references as context while keeping demo claims honest.
-

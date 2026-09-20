@@ -25,6 +25,7 @@ Users move between Overview, Purchases, and Customers. They select date ranges, 
 ## Capabilities and Constraints
 
 - The app consumes only explicit `@workspace/ui` component exports and the shared stylesheet; application code owns content, state, API boundaries, and domain formatting.
+- Before a `packages/ui` component is added or materially changed for this app, identify its one-to-one shadcn foundation and obtain explicit confirmation. If no corresponding shadcn component exists, keep the behavior in `apps/web` unless the user approves a documented exception; the existing TanStack Charts integration is an approved exception.
 - Mocked responses are deterministic for reproducible screenshots and tests. They do not represent Coinflow’s production API.
 - Normal production builds expect a real `/api/user` endpoint; mock behavior is enabled only for development or `VITE_ENABLE_MOCKS=true` builds.
 - The current routes are dashboard overview, purchases, and customers; data is intentionally fictional.
@@ -47,4 +48,3 @@ This demo is based on Coinflow’s real company and product. Preserve the Coinfl
 - Keep demo data and claims transparent rather than implying production access.
 - Reuse the shared system instead of creating page-local visual behavior.
 - Preserve responsive, keyboard-accessible workflows.
-

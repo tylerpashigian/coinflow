@@ -29,6 +29,13 @@ const purchasesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "purchases",
   component: PurchasesRoutePage,
+  validateSearch: (search: Record<string, unknown>) => ({
+    customerId:
+      typeof search.customerId === "string" &&
+      /^cus_[A-Za-z0-9]+$/.test(search.customerId)
+        ? search.customerId
+        : undefined,
+  }),
 })
 const customersRoute = createRoute({
   getParentRoute: () => rootRoute,

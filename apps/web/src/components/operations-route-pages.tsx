@@ -1,9 +1,15 @@
-import { Outlet, useMatch, useNavigate } from "@tanstack/react-router"
+import {
+  Outlet,
+  useMatch,
+  useNavigate,
+  useSearch,
+} from "@tanstack/react-router"
 import { CustomersPage } from "@/pages/customers-page"
 import { PurchasesPage } from "@/pages/purchases-page"
 
 export function PurchasesRoutePage() {
   const navigate = useNavigate()
+  const { customerId } = useSearch({ from: "/purchases" })
   const selectedPayment = useMatch({
     from: "/purchases/$paymentId",
     shouldThrow: false,
@@ -13,12 +19,22 @@ export function PurchasesRoutePage() {
   return (
     <>
       <PurchasesPage
+        customerId={customerId}
         selectedPayment={selectedPayment}
-        onCloseDetail={() => navigate({ to: "/purchases" })}
+        onCloseDetail={() =>
+          navigate({ to: "/purchases", search: { customerId } })
+        }
         onSelectPayment={(payment) =>
           navigate({
             to: "/purchases/$paymentId",
             params: { paymentId: payment.id },
+            search: { customerId },
+          })
+        }
+        onViewCustomer={(customerId) =>
+          navigate({
+            to: "/customers/$customerId",
+            params: { customerId },
           })
         }
       />
@@ -44,6 +60,12 @@ export function CustomersRoutePage() {
           navigate({
             to: "/customers/$customerId",
             params: { customerId: customer.id },
+          })
+        }
+        onViewRelatedPayments={(customer) =>
+          navigate({
+            to: "/purchases",
+            search: { customerId: customer.id },
           })
         }
       />

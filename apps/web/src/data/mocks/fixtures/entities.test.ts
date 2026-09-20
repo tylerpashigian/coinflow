@@ -12,5 +12,8 @@ describe("operations mock fixtures", () => {
     expect(payments.every((payment) => customerIds.has(payment.customerId))).toBe(
       true
     )
+    expect(
+      payments.every((payment) => payment.transactionReference.startsWith("txn_"))
+    ).toBe(true)
   })
 })

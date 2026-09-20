@@ -30,15 +30,19 @@ const payoutSeries = [
 
 function breakdown(
   series: typeof paymentSeries,
-  definitions: readonly { id: string; label: string; share: number }[]
+  definitions: readonly {
+    id: string
+    label: string
+    shares: readonly number[]
+  }[]
 ) {
-  return definitions.map(({ id, label, share }) => ({
+  return definitions.map(({ id, label, shares }) => ({
     id,
     label,
-    points: series.map((point) => ({
+    points: series.map((point, index) => ({
       ...point,
-      amount: Math.round(point.amount * share),
-      count: Math.round(point.count * share),
+      amount: Math.round(point.amount * shares[index]),
+      count: Math.round(point.count * shares[index]),
     })),
   }))
 }
@@ -54,16 +58,48 @@ export const dashboardOverview: DashboardOverview = {
   },
   paymentSeries,
   paymentBreakdown: breakdown(paymentSeries, [
-    { id: "card", label: "Card", share: 0.74 },
-    { id: "bank", label: "Bank", share: 0.12 },
-    { id: "crypto", label: "Crypto", share: 0.08 },
-    { id: "wallet", label: "Wallet", share: 0.06 },
+    {
+      id: "card",
+      label: "Card",
+      shares: [0.52, 0.5, 0.55, 0.49, 0.53, 0.51, 0.48],
+    },
+    {
+      id: "bank",
+      label: "Bank",
+      shares: [0.27, 0.29, 0.24, 0.3, 0.26, 0.28, 0.31],
+    },
+    {
+      id: "crypto",
+      label: "Crypto",
+      shares: [0.14, 0.13, 0.14, 0.15, 0.13, 0.14, 0.13],
+    },
+    {
+      id: "wallet",
+      label: "Wallet",
+      shares: [0.07, 0.08, 0.07, 0.06, 0.08, 0.07, 0.08],
+    },
   ]),
   payoutSeries,
   payoutBreakdown: breakdown(payoutSeries, [
-    { id: "standard", label: "Standard", share: 0.58 },
-    { id: "same-day", label: "Same day", share: 0.22 },
-    { id: "rtp", label: "ASAP (RTP)", share: 0.12 },
-    { id: "card", label: "Card", share: 0.08 },
+    {
+      id: "standard",
+      label: "Standard",
+      shares: [0.47, 0.44, 0.49, 0.46, 0.45, 0.48, 0.43],
+    },
+    {
+      id: "same-day",
+      label: "Same day",
+      shares: [0.3, 0.32, 0.28, 0.31, 0.33, 0.29, 0.34],
+    },
+    {
+      id: "rtp",
+      label: "ASAP (RTP)",
+      shares: [0.15, 0.16, 0.15, 0.14, 0.14, 0.16, 0.15],
+    },
+    {
+      id: "card",
+      label: "Card",
+      shares: [0.08, 0.08, 0.08, 0.09, 0.08, 0.07, 0.08],
+    },
   ]),
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-17T00:00:00-05:00",
+  "generatedAt": "2026-09-19T00:00:00-05:00",
   "title": "Design System: Coinflow Merchant Dashboard UI",
   "extensions": {
     "colorMeta": {
@@ -38,9 +38,10 @@
     "rules": [
       { "name": "Signal-Only Color", "body": "Color earns its place by indicating a status, data series, focus, or selection; it is not used as ambient decoration.", "section": "colors" },
       { "name": "Workmanlike Type", "body": "Use weight and tone to establish hierarchy before increasing size; large type belongs to page or summary moments, not routine controls.", "section": "typography" },
-      { "name": "Structural Lift", "body": "Borders establish ordinary containment. Shadows are reserved for bounded surfaces that need separation from their immediate surroundings.", "section": "elevation" }
+      { "name": "Structural Lift", "body": "Borders establish ordinary containment. Shadows are reserved for bounded surfaces that need separation from their immediate surroundings.", "section": "elevation" },
+      { "name": "Provenance", "body": "Every public design-system primitive has a named, one-to-one shadcn foundation. Confirm that mapping before a primitive is added or materially changed; contextual product compositions remain in apps/web.", "section": "components" }
     ],
-    "dos": ["Do make data, status, and task completion the visual focal points.", "Do use thin borders and tonal contrast before adding elevation.", "Do reserve semantic hues for status, validation, and data relationships.", "Do preserve a compact responsive path from desktop rail to mobile navigation drawer."],
-    "donts": ["Don't use shadows as everyday ornament or stack multiple lifted containers.", "Don't apply saturated color to broad page surfaces without a meaningful state or data role.", "Don't expand routine controls into oversized, consumer-app forms.", "Don't make navigation or decorative treatment compete with record data."]
+    "dos": ["Do make data, status, and task completion the visual focal points.", "Do use thin borders and tonal contrast before adding elevation.", "Do reserve semantic hues for status, validation, and data relationships.", "Do preserve a compact responsive path from desktop rail to mobile navigation drawer.", "Do document and confirm the corresponding shadcn component before changing a public primitive."],
+    "donts": ["Don't use shadows as everyday ornament or stack multiple lifted containers.", "Don't apply saturated color to broad page surfaces without a meaningful state or data role.", "Don't expand routine controls into oversized, consumer-app forms.", "Don't make navigation or decorative treatment compete with record data.", "Don't add a custom foundational primitive when the behavior is contextual to the application."]
   }
 }

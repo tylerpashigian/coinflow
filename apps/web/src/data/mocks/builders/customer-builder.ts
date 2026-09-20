@@ -27,7 +27,7 @@ export function customerBuilder(overrides: Partial<Customer> = {}) {
     blocked: faker.datatype.boolean({ probability: 0.1 }),
     threeDSProcessing: faker.helpers.arrayElement(["enabled", "disabled"]),
     attemptLimit: faker.number.int({ min: 3, max: 8 }),
-    verification: faker.helpers.arrayElement(["enforced", "not_found"]),
+    verification: faker.helpers.arrayElement(["enforced", "not_found", "pending"]),
     methods: [
       {
         type: "Card",
@@ -35,7 +35,8 @@ export function customerBuilder(overrides: Partial<Customer> = {}) {
         last4: faker.string.numeric(4),
       },
     ],
-    activities: [{ description: "Customer created", occurredAt: createdAt }],
+    activities: [{ id: `evt_${faker.string.alphanumeric(8)}`, type: "customer", title: "Customer created", occurredAt: createdAt, actor: "system" }],
+    notes: [],
     ...overrides,
   }
 

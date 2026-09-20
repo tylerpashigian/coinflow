@@ -1,7 +1,4 @@
-export type CustomerActivity = {
-  description: string
-  occurredAt: string
-}
+import type { InvestigationEvent } from "./payment"
 
 export type CustomerMethod = {
   brand: string
@@ -11,7 +8,7 @@ export type CustomerMethod = {
 
 /** Canonical client model used by the operations UI. */
 export type Customer = {
-  activities: CustomerActivity[]
+  activities: InvestigationEvent[]
   attemptLimit: number
   blocked: boolean
   createdAt: string
@@ -22,5 +19,6 @@ export type Customer = {
   name: string
   protection: "approved" | "not_required"
   threeDSProcessing: "enabled" | "disabled"
-  verification: "enforced" | "not_found"
+  verification: "enforced" | "not_found" | "pending"
+  notes: readonly { id: string; body: string; createdAt: string }[]
 }

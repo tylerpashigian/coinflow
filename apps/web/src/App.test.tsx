@@ -294,7 +294,8 @@ describe("admin overview", () => {
       expect(await screen.findByText("Customer details")).toBeVisible()
       expect(window.location.pathname).toBe("/customers/cus_nova")
       fireEvent.click(screen.getByRole("tab", { name: "Methods" }))
-      expect(await screen.findByText("Visa •••• 4242")).toBeVisible()
+      expect(await screen.findByText("Card · Visa")).toBeVisible()
+      expect(screen.getByText("•••• 4242")).toBeVisible()
     } finally {
       restoreMatchMedia()
     }
