@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useId, useRef, useState } from "react"
 import { Checkbox } from "../private/checkbox"
 import { cn } from "cn"
 import { Badge, type BadgeVariant } from "./badge"
@@ -39,6 +39,10 @@ export interface DataTableProps {
   defaultSelectedIds?: readonly string[]
   /** Highlights the record currently open in contextual detail. */
   activeRowId?: string
+  /** Keeps the leading context column visible while a wide table scrolls. */
+  pinLeadingColumn?: boolean
+  /** Announces horizontal overflow only when it is actually present. */
+  overflowHint?: string
   onSelectionChange?: (ids: string[]) => void
   "data-testid"?: string
 }
@@ -57,9 +61,14 @@ export function DataTable({
   selectedIds,
   defaultSelectedIds = [],
   activeRowId,
+  pinLeadingColumn = false,
+  overflowHint = "Scroll horizontally to view remaining columns.",
   onSelectionChange,
   "data-testid": testId,
 }: DataTableProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const overflowHintId = useId()
+  const [hasHorizontalOverflow, setHasHorizontalOverflow] = useState(false)
   const [localSort, setLocalSort] = useState<TableSort | null>(
     defaultSorting ?? null
   )
@@ -107,12 +116,34 @@ export function DataTable({
     setLocalSelection(next)
     onSelectionChange?.(next)
   }
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+    const updateOverflow = () =>
+      setHasHorizontalOverflow(container.scrollWidth > container.clientWidth + 1)
+    updateOverflow()
+    const observer =
+      typeof ResizeObserver === "undefined"
+        ? undefined
+        : new ResizeObserver(updateOverflow)
+    observer?.observe(container)
+    window.addEventListener("resize", updateOverflow)
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener("resize", updateOverflow)
+    }
+  }, [columns, rows])
   return (
     <div
+      ref={containerRef}
       className="relative w-full overflow-x-auto rounded-xl border border-border bg-card shadow-sm"
       data-testid={testId}
     >
-      <table aria-label={ariaLabel} className="w-full caption-bottom text-sm">
+      <table
+        aria-label={ariaLabel}
+        aria-describedby={hasHorizontalOverflow ? overflowHintId : undefined}
+        className="w-full caption-bottom text-sm"
+      >
         <thead className="border-b bg-muted/35">
           <tr>
             {selection !== "none" && (
@@ -120,7 +151,7 @@ export function DataTable({
                 <span className="sr-only">Selection</span>
               </th>
             )}
-            {columns.map((column) => (
+            {columns.map((column, index) => (
               <th
                 key={column.id}
                 scope="col"
@@ -133,6 +164,8 @@ export function DataTable({
                 }
                 className={cn(
                   "h-11 px-4 text-[0.6875rem] font-semibold whitespace-nowrap text-muted-foreground",
+                  pinLeadingColumn && index === 0 &&
+                    "sticky left-0 z-20 border-r border-border/70 bg-muted",
                   column.align === "right"
                     ? "text-right"
                     : column.align === "center"
@@ -213,6 +246,16 @@ export function DataTable({
                     className={cn(
                       "px-4 align-middle whitespace-nowrap",
                       density === "compact" ? "py-2" : "py-3",
+                      pinLeadingColumn &&
+                        index === 0 &&
+                        "sticky left-0 z-10 border-r border-border/70",
+                      pinLeadingColumn &&
+                        index === 0 &&
+                        (activeRowId === row.id
+                          ? "bg-accent"
+                          : selected.includes(row.id)
+                            ? "bg-muted"
+                            : "bg-card"),
                       column.align === "right"
                         ? "text-right"
                         : column.align === "center"
@@ -243,6 +286,14 @@ export function DataTable({
           )}
         </tbody>
       </table>
+      {hasHorizontalOverflow && (
+        <p
+          className="sticky left-0 border-t border-border/70 bg-card px-4 py-2 text-xs text-muted-foreground"
+          id={overflowHintId}
+        >
+          {overflowHint}
+        </p>
+      )}
     </div>
   )
 }

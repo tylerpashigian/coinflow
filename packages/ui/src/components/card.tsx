@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import { cn } from "cn"
+import { Icon, type IconName } from "../private/icons"
 import { Text } from "./text"
 export interface CardDetail {
   label: string
@@ -13,6 +14,8 @@ export interface CardProps {
   summary?: string
   footer?: string
   details?: readonly CardDetail[]
+  /** A system icon that differentiates an otherwise comparable metric. */
+  metricIcon?: IconName
   variant?: "default" | "metric" | "record"
   "data-testid"?: string
 }
@@ -24,6 +27,7 @@ export function Card({
   summary,
   footer,
   details,
+  metricIcon,
   variant = "default",
   "data-testid": testId,
 }: CardProps) {
@@ -36,11 +40,18 @@ export function Card({
       )}
     >
       {variant === "metric" ? (
-        <div className="space-y-2">
-          <Text tone="muted">{title ?? ""}</Text>
-          <Text size="xl" weight="semibold">
-            {summary ?? ""}
-          </Text>
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-2">
+            <Text tone="muted">{title ?? ""}</Text>
+            <Text size="xl" weight="semibold">
+              {summary ?? ""}
+            </Text>
+          </div>
+          {metricIcon && (
+            <div className="grid size-10 shrink-0 place-items-center rounded-lg bg-accent text-accent-foreground">
+              <Icon name={metricIcon} />
+            </div>
+          )}
         </div>
       ) : variant === "record" ? (
         <div className="space-y-2">

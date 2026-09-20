@@ -1,6 +1,8 @@
 import { Card } from "@workspace/ui/components/card"
+import { KeyValueList } from "@workspace/ui/components/key-value-list"
 import { Tabs } from "@workspace/ui/components/tabs"
 import type { Customer } from "@/data/models/customer"
+import { formatSentence } from "@/lib/format"
 export function CustomerDetails({ customer }: { customer: Customer }) {
   return (
     <Tabs
@@ -11,48 +13,66 @@ export function CustomerDetails({ customer }: { customer: Customer }) {
           value: "overview",
           label: "Overview",
           content: (
-            <Card
-              density="compact"
-              title={customer.name}
-              description={customer.email}
-              details={[
-                { label: "Merchant", value: customer.merchantName },
-                {
-                  label: "Protection",
-                  value: customer.protection.replaceAll("_", " "),
-                },
-                { label: "3DS processing", value: customer.threeDSProcessing },
-                {
-                  label: "Attempt limit",
-                  value: String(customer.attemptLimit),
-                },
-              ]}
-            />
+            <div className="space-y-5">
+              <Card
+                variant="record"
+                density="compact"
+                summary={customer.name}
+                description={customer.email}
+                details={[{ label: "Merchant", value: customer.merchantName }]}
+              />
+              <KeyValueList
+                title="Review controls"
+                description="Current customer protection settings"
+                items={[
+                  {
+                    label: "Protection",
+                    value: formatSentence(customer.protection),
+                  },
+                  {
+                    label: "3DS processing",
+                    value: formatSentence(customer.threeDSProcessing),
+                  },
+                  {
+                    label: "Attempt limit",
+                    value: String(customer.attemptLimit),
+                  },
+                  {
+                    label: "Verification",
+                    value: formatSentence(customer.verification),
+                  },
+                ]}
+              />
+            </div>
           ),
         },
         {
           value: "activity",
           label: "Activity",
-          content: customer.activities.map((activity) => (
-            <Card
-              key={activity.occurredAt}
-              density="compact"
-              title={activity.description}
-              description={new Date(activity.occurredAt).toLocaleString()}
+          content: (
+            <KeyValueList
+              title="Recent activity"
+              description="Latest customer events"
+              items={customer.activities.map((activity) => ({
+                label: new Date(activity.occurredAt).toLocaleString(),
+                value: activity.description,
+              }))}
             />
-          )),
+          ),
         },
         {
           value: "methods",
           label: "Methods",
-          content: customer.methods.map((method) => (
-            <Card
-              key={`${method.brand}-${method.last4}`}
-              density="compact"
-              title={method.type}
-              description={`${method.brand} •••• ${method.last4}`}
+          content: (
+            <KeyValueList
+              title="Saved methods"
+              description="Payment methods associated with this customer"
+              items={customer.methods.map((method) => ({
+                label: formatSentence(method.type),
+                value: `${method.brand} •••• ${method.last4}`,
+              }))}
             />
-          )),
+          ),
         },
       ]}
     />

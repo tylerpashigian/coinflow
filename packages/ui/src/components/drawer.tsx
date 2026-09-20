@@ -17,6 +17,8 @@ export interface DrawerProps {
   actions?: readonly OverlayAction[]
   placement?: "detail" | "navigation"
   density?: "compact" | "comfortable"
+  /** Wider detail surface for record investigation; navigation keeps its standard width. */
+  size?: "default" | "wide"
   headerVisibility?: "visible" | "accessible"
   initialFocus?: "content" | "search"
   "data-testid"?: string
@@ -32,6 +34,7 @@ export function Drawer({
   actions,
   placement = "detail",
   density = "comfortable",
+  size = "default",
   headerVisibility = "visible",
   initialFocus = "content",
   "data-testid": testId,
@@ -98,6 +101,11 @@ export function Drawer({
       )}
       <P.DrawerContent
         data-testid={testId}
+        className={
+          size === "wide" && placement === "detail"
+            ? "sm:[--drawer-content-width:32rem]"
+            : undefined
+        }
         initialFocus={() =>
           initialFocus === "search"
             ? (content.current?.querySelector<HTMLInputElement>(

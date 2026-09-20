@@ -161,7 +161,7 @@ function NavigationContent({
 function pageTitle(pathname: string) {
   if (pathname.startsWith("/purchases")) return "Purchases"
   if (pathname.startsWith("/customers")) return "Customers"
-  return "Overview"
+  return "Operator overview"
 }
 
 export function AppShell({ children }: { children: ReactNode }) {

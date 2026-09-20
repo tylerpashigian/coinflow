@@ -1,20 +1,23 @@
 import { Card } from "@workspace/ui/components/card"
+import { KeyValueList } from "@workspace/ui/components/key-value-list"
 import type { Payment } from "@/data/models/payment"
-import { formatCurrency } from "@/lib/format"
+import { formatCurrency, formatSentence } from "@/lib/format"
 export function PaymentDetails({ payment }: { payment: Payment }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <Card
         variant="record"
         density="compact"
         summary={formatCurrency(payment.amount)}
-        description={`${payment.status} · ${new Date(payment.createdAt).toLocaleString()}`}
-        details={[{ label: "Payment ID", value: payment.id }]}
-      />
-      <Card
-        density="compact"
-        title="Payment method"
+        description={`${formatSentence(payment.status)} · ${new Date(payment.createdAt).toLocaleString()}`}
         details={[
+          { label: "Payment ID", value: payment.id },
+          { label: "Customer", value: payment.customerName },
+        ]}
+      />
+      <KeyValueList
+        title="Payment method"
+        items={[
           { label: "Method", value: payment.method },
           {
             label: "Card",
@@ -22,29 +25,25 @@ export function PaymentDetails({ payment }: { payment: Payment }) {
           },
         ]}
       />
-      <Card
-        density="compact"
-        title="Risk and authentication"
-        details={[
+      <KeyValueList
+        title="Review controls"
+        description="Protection and authentication context"
+        items={[
           {
             label: "Protection",
-            value: payment.protection.replaceAll("_", " "),
+            value: formatSentence(payment.protection),
           },
-          { label: "3DS", value: payment.threeDS.replaceAll("_", " ") },
+          { label: "3DS", value: formatSentence(payment.threeDS) },
         ]}
       />
-      <Card
-        density="compact"
-        title="Processing"
-        details={[
+      <KeyValueList
+        title="Processing and fees"
+        items={[
           { label: "Processor", value: payment.processor },
-          { label: "Orchestration", value: payment.orchestrationResult },
-        ]}
-      />
-      <Card
-        density="compact"
-        title="Fees"
-        details={[
+          {
+            label: "Orchestration",
+            value: formatSentence(payment.orchestrationResult),
+          },
           { label: "Coinflow fee", value: formatCurrency(payment.fee) },
           {
             label: "Processor fee",

@@ -34,7 +34,7 @@ describe("admin overview", () => {
     render(<App />)
 
     expect(
-      await screen.findByRole("heading", { name: "Overview" })
+      await screen.findByRole("heading", { name: "Operator overview" })
     ).toBeVisible()
     expect(screen.getAllByText("$92,936,698")).toHaveLength(2)
     expect(screen.getByText("Logged in as")).toBeVisible()
@@ -48,7 +48,7 @@ describe("admin overview", () => {
       "/purchases"
     )
     expect(
-      screen.getByRole("img", { name: "Payments amount trend" })
+      screen.getByRole("img", { name: "payments amount activity trend" })
     ).toBeVisible()
   })
 
@@ -79,7 +79,7 @@ describe("admin overview", () => {
   it("provides the desktop sidebar content in an accessible mobile navigation drawer", async () => {
     render(<App />)
 
-    await screen.findByRole("heading", { name: "Overview" })
+    await screen.findByRole("heading", { name: "Operator overview" })
     const menuTrigger = screen.getByRole("button", { name: "Open navigation" })
     expect(menuTrigger.closest("header")).toHaveClass("lg:hidden")
     expect(screen.getByText("Coinflow").closest("aside")).toHaveClass(
@@ -124,7 +124,7 @@ describe("admin overview", () => {
     const homeDrawer = await screen.findByRole("dialog", { name: "Navigation" })
     fireEvent.click(within(homeDrawer).getByRole("link", { name: "Home" }))
     expect(
-      await screen.findByRole("heading", { name: "Overview" })
+      await screen.findByRole("heading", { name: "Operator overview" })
     ).toBeVisible()
   })
 
@@ -155,7 +155,7 @@ describe("admin overview", () => {
 
     try {
       render(<App />)
-      await screen.findByRole("heading", { name: "Overview" })
+      await screen.findByRole("heading", { name: "Operator overview" })
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }))
       expect(
         await screen.findByRole("dialog", { name: "Navigation" })
@@ -203,13 +203,15 @@ describe("admin overview", () => {
             payoutCount: 5,
           },
           paymentSeries: [],
+          paymentBreakdown: [],
           payoutSeries: [],
+          payoutBreakdown: [],
         })
       })
     )
     render(<App />)
 
-    await screen.findByRole("img", { name: "Payments amount trend" })
+    await screen.findByRole("img", { name: "payments amount activity trend" })
     fireEvent.click(screen.getByRole("tab", { name: "Local" }))
     await waitFor(() =>
       expect(queries.some((query) => query.includes("timezone=local"))).toBe(
@@ -223,9 +225,14 @@ describe("admin overview", () => {
     )
 
     expect(
-      await screen.findByRole("img", { name: "Payments count trend" })
+      await screen.findByRole("img", { name: "payments count activity trend" })
     ).toBeVisible()
     expect(screen.getByText("10")).toBeVisible()
+    fireEvent.click(screen.getByRole("tab", { name: "Payouts" }))
+    expect(
+      await screen.findByRole("img", { name: "payouts count activity trend" })
+    ).toBeVisible()
+    expect(screen.getByText("5")).toBeVisible()
     expect(await screen.findByText("Aug 17 – Aug 23, 2026")).toBeVisible()
   })
 

@@ -19,3 +19,9 @@ export function formatShortDate(date: string) {
     day: "numeric",
   }).format(new Date(date.includes("T") ? date : `${date}T12:00:00Z`))
 }
+
+export function formatSentence(value: string) {
+  return value
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase())
+}

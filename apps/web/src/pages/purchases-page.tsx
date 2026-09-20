@@ -17,7 +17,7 @@ import type { Payment } from "@/data/models/payment"
 import { usePayments } from "@/hooks/use-payments"
 import { useStablePending } from "@/hooks/use-stable-pending"
 import { filterByDateRange } from "@/lib/filter-by-date-range"
-import { formatCurrency, formatShortDate } from "@/lib/format"
+import { formatCurrency, formatSentence, formatShortDate } from "@/lib/format"
 
 const columns: readonly TableColumn[] = [
   { id: "createdAt", label: "Date", initialDirection: "descending" },
@@ -47,15 +47,15 @@ function tableRow(row: Payment): TableRowData {
       { text: formatCurrency(row.amount), sortValue: row.amount },
       { text: String(row.customerName) },
       {
-        text: row.status.replaceAll("_", " "),
+        text: formatSentence(row.status),
         badge: row.status === "settled" ? "success" : "destructive",
       },
       {
-        text: row.protection.replaceAll("_", " "),
+        text: formatSentence(row.protection),
         badge: row.protection === "approved" ? "success" : "outline",
       },
       {
-        text: row.threeDS.replaceAll("_", " "),
+        text: formatSentence(row.threeDS),
         badge: row.threeDS === "passed" ? "success" : "outline",
       },
     ],
@@ -93,16 +93,19 @@ export function PurchasesPage({
   )
 
   return (
-    <section className="mx-auto max-w-[110rem] p-5 md:p-9">
-      <div className="mb-6 flex flex-col justify-between gap-5 border-b border-border/80 pb-7 md:flex-row md:items-end">
-        <div>
+    <section className="mx-auto max-w-[112rem] p-5 md:p-9">
+      <header className="mb-5 grid gap-5 border-b border-border/80 pb-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="min-w-0">
           <Text role="heading" headingLevel={2} variant="heading">
             Purchases
           </Text>
           <Text tone="muted">Review payments and processing outcomes.</Text>
+          <Text variant="caption" tone="muted">
+            Showing {filteredPayments.length} payment records
+          </Text>
         </div>
-        <div className="w-full md:w-auto">
-          <FormField label="Purchase date range">
+        <div className="w-full sm:w-auto">
+          <FormField label="Purchase date range" labelVisuallyHidden>
             <DateRangePicker
               defaultMonth={latestPaymentDate}
               onValueChange={setDateRange}
@@ -110,12 +113,14 @@ export function PurchasesPage({
             />
           </FormField>
         </div>
-      </div>
+      </header>
       <DataTable
         ariaLabel="Purchases"
         activeRowId={selectedPayment?.id}
         columns={columns}
         rows={filteredPayments.map(tableRow)}
+        density="compact"
+        pinLeadingColumn
         defaultSorting={{ column: "createdAt", direction: "descending" }}
         onRowActivate={(id) => {
           const row = filteredPayments.find((row) => row.id === id)
@@ -128,6 +133,7 @@ export function PurchasesPage({
         title="Payment details"
         description="Payment record and processing information."
         placement="detail"
+        size="wide"
         data-testid="responsive-detail-drawer"
       >
         {selectedPayment ? (

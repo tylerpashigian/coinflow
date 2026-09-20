@@ -15,6 +15,13 @@ export type DashboardSeriesPoint = {
   date: string
 }
 
+/** Illustrative method/rail breakdown returned alongside each aggregate trend. */
+export type DashboardBreakdownSeries = {
+  id: string
+  label: string
+  points: DashboardSeriesPoint[]
+}
+
 export type DashboardOverview = {
   rangeLabel: string
   summaries: {
@@ -25,5 +32,7 @@ export type DashboardOverview = {
     payouts: number
   }
   paymentSeries: DashboardSeriesPoint[]
+  paymentBreakdown: DashboardBreakdownSeries[]
   payoutSeries: DashboardSeriesPoint[]
+  payoutBreakdown: DashboardBreakdownSeries[]
 }

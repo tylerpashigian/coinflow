@@ -51,6 +51,7 @@
     "./components/drawer": "./src/components/drawer.tsx",
     "./components/field": "./src/components/field.tsx",
     "./components/input": "./src/components/input.tsx",
+    "./components/key-value-list": "./src/components/key-value-list.tsx",
     "./components/kbd": "./src/components/kbd.tsx",
     "./components/line-chart": "./src/components/line-chart.tsx",
     "./components/calendar": "./src/components/calendar.tsx",

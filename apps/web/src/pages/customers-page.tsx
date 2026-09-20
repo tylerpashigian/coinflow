@@ -17,7 +17,7 @@ import type { Customer } from "@/data/models/customer"
 import { useCustomers } from "@/hooks/use-customers"
 import { useStablePending } from "@/hooks/use-stable-pending"
 import { filterByDateRange } from "@/lib/filter-by-date-range"
-import { formatShortDate } from "@/lib/format"
+import { formatSentence, formatShortDate } from "@/lib/format"
 
 const columns: readonly TableColumn[] = [
   { id: "createdAt", label: "Created", initialDirection: "descending" },
@@ -43,7 +43,7 @@ function tableRow(row: Customer): TableRowData {
       { text: String(row.name) },
       { text: String(row.email) },
       {
-        text: row.protection.replaceAll("_", " "),
+        text: formatSentence(row.protection),
         badge: row.protection === "approved" ? "success" : "outline",
       },
       {
@@ -51,12 +51,12 @@ function tableRow(row: Customer): TableRowData {
         badge: row.blocked ? "destructive" : "success",
       },
       {
-        text: row.threeDSProcessing.replaceAll("_", " "),
+        text: formatSentence(row.threeDSProcessing),
         badge: row.threeDSProcessing === "enabled" ? "info" : "outline",
       },
       { text: String(row.attemptLimit), sortValue: row.attemptLimit },
       {
-        text: row.verification.replaceAll("_", " "),
+        text: formatSentence(row.verification),
         badge: row.verification === "not_found" ? "warning" : "info",
       },
     ],
@@ -96,18 +96,21 @@ export function CustomersPage({
   )
 
   return (
-    <section className="mx-auto max-w-[110rem] p-5 md:p-9">
-      <div className="mb-6 flex flex-col justify-between gap-5 border-b border-border/80 pb-7 md:flex-row md:items-end">
-        <div>
+    <section className="mx-auto max-w-[112rem] p-5 md:p-9">
+      <header className="mb-5 grid gap-5 border-b border-border/80 pb-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="min-w-0">
           <Text role="heading" headingLevel={2} variant="heading">
             Customers
           </Text>
           <Text tone="muted">
             Review customer records, activity, and saved methods.
           </Text>
+          <Text variant="caption" tone="muted">
+            Showing {filteredCustomers.length} customer records
+          </Text>
         </div>
-        <div className="w-full md:w-auto">
-          <FormField label="Customer date range">
+        <div className="w-full sm:w-auto">
+          <FormField label="Customer date range" labelVisuallyHidden>
             <DateRangePicker
               defaultMonth={latestCustomerDate}
               onValueChange={setDateRange}
@@ -115,12 +118,14 @@ export function CustomersPage({
             />
           </FormField>
         </div>
-      </div>
+      </header>
       <DataTable
         ariaLabel="Customers"
         activeRowId={selectedCustomer?.id}
         columns={columns}
         rows={filteredCustomers.map(tableRow)}
+        density="compact"
+        pinLeadingColumn
         defaultSorting={{ column: "createdAt", direction: "descending" }}
         onRowActivate={(id) => {
           const row = filteredCustomers.find((row) => row.id === id)
@@ -133,6 +138,7 @@ export function CustomersPage({
         title="Customer details"
         description="Customer identity, activity, and saved payment methods."
         placement="detail"
+        size="wide"
         data-testid="responsive-detail-drawer"
       >
         {selectedCustomer ? (

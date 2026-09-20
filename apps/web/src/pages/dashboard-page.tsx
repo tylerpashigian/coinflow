@@ -1,7 +1,10 @@
 import { Select } from "@workspace/ui/components/select"
 import { useState } from "react"
 import { Card } from "@workspace/ui/components/card"
-import { LineChart } from "@workspace/ui/components/line-chart"
+import {
+  LineChart,
+  type LineChartSeries,
+} from "@workspace/ui/components/line-chart"
 import { Tabs } from "@workspace/ui/components/tabs"
 import { Text } from "@workspace/ui/components/text"
 import { PageFeedback } from "@/components/page-feedback"
@@ -22,8 +25,11 @@ const dateRanges = {
   current: { from: "2026-08-24", to: "2026-08-30" },
 } as const
 
+type DashboardDomain = "payments" | "payouts"
+
 export function DashboardPage() {
   const [metric, setMetric] = useState<DashboardMetric>("amount")
+  const [domain, setDomain] = useState<DashboardDomain>("payments")
   const [timezone, setTimezone] = useState<DashboardTimezone>("utc")
   const [range, setRange] = useState<keyof typeof dateRanges>("current")
   const overview = useDashboardOverview({
@@ -56,6 +62,34 @@ export function DashboardPage() {
     }))
   const metricValue = (value: number) =>
     metric === "amount" ? formatCurrency(value) : formatCompactNumber(value)
+  const selectedSeries =
+    domain === "payments" ? data.paymentSeries : data.payoutSeries
+  const selectedBreakdown =
+    domain === "payments" ? data.paymentBreakdown : data.payoutBreakdown
+  const selectedTotal =
+    domain === "payments"
+      ? metric === "amount"
+        ? data.summaries.payments
+        : data.summaries.paymentCount
+      : metric === "amount"
+        ? data.summaries.payouts
+        : data.summaries.payoutCount
+  const chartSeries: LineChartSeries[] = [
+    {
+      id: "total",
+      label: `All ${domain}`,
+      data: chartPoints(selectedSeries),
+      tone: "primary",
+    },
+    ...selectedBreakdown.map((series, index) => ({
+      id: series.id,
+      label: series.label,
+      data: chartPoints(series.points),
+      tone: (["secondary", "tertiary", "quaternary", "quinary"] as const)[
+        index % 4
+      ],
+    })),
+  ]
 
   return (
     <section className="mx-auto max-w-[96rem] p-5 md:p-9">
@@ -97,6 +131,7 @@ export function DashboardPage() {
         <SummaryCard
           label="Payments"
           value={formatCurrency(data.summaries.payments)}
+          icon="payments"
           detail={data.rangeLabel}
         />
         <SummaryCard
@@ -104,38 +139,24 @@ export function DashboardPage() {
           value={new Intl.NumberFormat("en-US").format(
             data.summaries.newCustomers
           )}
+          icon="customers"
           detail={data.rangeLabel}
         />
         <SummaryCard
           label="Payouts"
           value={formatCurrency(data.summaries.payouts)}
+          icon="wallet"
           detail={data.rangeLabel}
         />
       </div>
-      <div className="mt-7 grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(22rem,0.85fr)]">
-        <TrendCard
-          tone="primary"
-          data={chartPoints(data.paymentSeries)}
+      <div className="mt-7">
+        <ActivityChart
+          domain={domain}
           metric={metric}
+          onDomainChange={setDomain}
           onMetricChange={setMetric}
-          title="Payments"
-          total={metricValue(
-            metric === "amount"
-              ? data.summaries.payments
-              : data.summaries.paymentCount
-          )}
-        />
-        <TrendCard
-          tone="secondary"
-          data={chartPoints(data.payoutSeries)}
-          metric={metric}
-          onMetricChange={setMetric}
-          title="Payouts"
-          total={metricValue(
-            metric === "amount"
-              ? data.summaries.payouts
-              : data.summaries.payoutCount
-          )}
+          series={chartSeries}
+          total={metricValue(selectedTotal)}
         />
       </div>
     </section>
@@ -145,40 +166,73 @@ export function DashboardPage() {
 function SummaryCard({
   label,
   value,
+  icon,
   detail,
 }: {
   label: string
   value: string
+  icon: "payments" | "customers" | "wallet"
   detail: string
-}) {
-  return <Card variant="metric" title={label} summary={value} footer={detail} />
-}
-
-function TrendCard({
-  tone,
-  data,
-  metric,
-  onMetricChange,
-  title,
-  total,
-}: {
-  tone: "primary" | "secondary"
-  data: { label: string; value: number }[]
-  metric: DashboardMetric
-  onMetricChange: (value: DashboardMetric) => void
-  title: string
-  total: string
 }) {
   return (
     <Card
-      density="spacious"
-      title={title}
-      description="Settled volume by day"
-      summary={total}
-    >
-      <div className="mt-5">
+      variant="metric"
+      title={label}
+      summary={value}
+      footer={detail}
+      metricIcon={icon}
+    />
+  )
+}
+
+function ActivityChart({
+  domain,
+  metric,
+  onDomainChange,
+  onMetricChange,
+  series,
+  total,
+}: {
+  domain: DashboardDomain
+  metric: DashboardMetric
+  onDomainChange: (value: DashboardDomain) => void
+  onMetricChange: (value: DashboardMetric) => void
+  series: readonly LineChartSeries[]
+  total: string
+}) {
+  return (
+    <Card density="spacious">
+      <div className="flex flex-col gap-5 border-b border-border/70 pb-5 md:flex-row md:items-start md:justify-between">
+        <div className="space-y-1">
+          <Text role="heading" headingLevel={3} weight="semibold">
+            {domain === "payments" ? "Payment activity" : "Payout activity"}
+          </Text>
+          <Text variant="caption" tone="muted">
+            Aggregate volume and method mix by day
+          </Text>
+        </div>
         <Tabs
-          label={`${title} metric`}
+          label="Activity domain"
+          items={[
+            { value: "payments", label: "Payments" },
+            { value: "payouts", label: "Payouts" },
+          ]}
+          value={domain}
+          onValueChange={(value) => {
+            if (value === "payments" || value === "payouts")
+              onDomainChange(value)
+          }}
+        />
+      </div>
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <Text tone="muted">{metric === "amount" ? "Settled volume" : "Settled transactions"}</Text>
+          <Text size="xl" weight="semibold">
+            {total}
+          </Text>
+        </div>
+        <Tabs
+          label="Activity measure"
           items={[
             { value: "amount", label: "Amount" },
             { value: "count", label: "Count" },
@@ -187,14 +241,13 @@ function TrendCard({
           onValueChange={(value) => {
             if (value === "amount" || value === "count") onMetricChange(value)
           }}
-        ></Tabs>
+        />
       </div>
-      <div className="mt-6 min-h-64">
+      <div className="mt-6 min-h-80">
         <LineChart
-          ariaLabel={`${title} ${metric} trend`}
-          tone={tone}
-          data={data}
-          height={tone === "primary" ? 320 : 264}
+          ariaLabel={`${domain} ${metric} activity trend`}
+          series={series}
+          height={360}
         />
       </div>
     </Card>
