@@ -10,6 +10,7 @@ import {
   Cancel01Icon,
   Search01Icon,
   Calendar03Icon,
+  Delete02Icon,
 } from "@hugeicons/core-free-icons"
 export type IconName =
   | "home"
@@ -22,6 +23,7 @@ export type IconName =
   | "close"
   | "search"
   | "calendar"
+  | "trash"
 const icons = {
   home: Home01Icon,
   wallet: Wallet01Icon,
@@ -33,6 +35,7 @@ const icons = {
   close: Cancel01Icon,
   search: Search01Icon,
   calendar: Calendar03Icon,
+  trash: Delete02Icon,
 }
 export function Icon({ name }: { name: IconName }) {
   return (
