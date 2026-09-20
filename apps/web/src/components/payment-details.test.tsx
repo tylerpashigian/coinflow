@@ -15,7 +15,9 @@ const payment = paymentBuilder({
   transactionReference: "txn_8X4P",
 }).build()
 
-function renderDetails(overrides: Partial<React.ComponentProps<typeof PaymentDetails>> = {}) {
+function renderDetails(
+  overrides: Partial<React.ComponentProps<typeof PaymentDetails>> = {}
+) {
   return render(
     <PaymentDetails
       payment={payment}
@@ -56,9 +58,7 @@ describe("PaymentDetails actions", () => {
 
     await selectAction("Copy transaction reference")
 
-    await waitFor(() =>
-      expect(writeText).toHaveBeenCalledWith("txn_8X4P")
-    )
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith("txn_8X4P"))
     expect(notify).toHaveBeenCalledWith({
       type: "success",
       title: "Transaction reference copied",

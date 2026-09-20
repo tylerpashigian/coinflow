@@ -21,10 +21,10 @@ function TimelineEvent({
 }) {
   return (
     <div className="grid grid-cols-[0.75rem_1fr] gap-3">
-      <span className="mt-1.5 size-2 rounded-full bg-success" />
-      <div className="border-b border-border/70 pb-3">
+      <span className="mt-1.5 size-2 rounded-full bg-chart-1" />
+      <div className="border-b border-border/80 pb-4">
         <div className="flex justify-between gap-3">
-          <strong className="text-sm">{title}</strong>
+          <strong className="text-sm font-semibold">{title}</strong>
           <span className="text-xs text-muted-foreground">{time}</span>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">{detail}</p>
@@ -100,11 +100,19 @@ export function PaymentDetails({
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-2xl font-semibold tabular-nums">
+          <p className="text-2xl font-semibold tracking-[-0.02em] tabular-nums">
             {formatCurrency(current.amount)}
           </p>
-          <div className="mt-1 flex gap-2">
-            <Badge variant={settled ? "success" : "destructive"}>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <Badge
+              variant={
+                settled
+                  ? "success"
+                  : current.status === "refunded"
+                    ? "info"
+                    : "destructive"
+              }
+            >
               {formatSentence(current.status)}
             </Badge>
             <span className="text-xs text-muted-foreground">

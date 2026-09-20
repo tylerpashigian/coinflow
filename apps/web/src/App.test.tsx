@@ -1,4 +1,11 @@
-import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react"
 import { http, HttpResponse } from "msw"
 import { describe, expect, it } from "vitest"
 import { App } from "./App"
@@ -93,7 +100,9 @@ describe("admin overview", () => {
     expect(
       within(drawer).getByRole("combobox", { name: "Merchant ID" })
     ).toHaveTextContent("Coinflow Admin")
-    expect(within(drawer).getByRole("searchbox", { name: "Search" })).toBeVisible()
+    expect(
+      within(drawer).getByRole("searchbox", { name: "Search" })
+    ).toBeVisible()
     expect(within(drawer).getByRole("link", { name: "Home" })).toHaveAttribute(
       "aria-current",
       "page"
@@ -110,7 +119,9 @@ describe("admin overview", () => {
     const reopenedDrawer = await screen.findByRole("dialog", {
       name: "Navigation",
     })
-    fireEvent.click(within(reopenedDrawer).getByRole("link", { name: "Purchases" }))
+    fireEvent.click(
+      within(reopenedDrawer).getByRole("link", { name: "Purchases" })
+    )
 
     expect(
       await screen.findByRole("heading", { name: "Purchases" })
@@ -129,8 +140,14 @@ describe("admin overview", () => {
   })
 
   it("closes mobile navigation when the viewport reaches the desktop breakpoint", async () => {
-    const originalMatchMedia = Object.getOwnPropertyDescriptor(window, "matchMedia")
-    const listeners = new Map<string, Set<(event: MediaQueryListEvent) => void>>()
+    const originalMatchMedia = Object.getOwnPropertyDescriptor(
+      window,
+      "matchMedia"
+    )
+    const listeners = new Map<
+      string,
+      Set<(event: MediaQueryListEvent) => void>
+    >()
     const matches = new Map([
       ["(max-width: 1023px)", true],
       ["(min-width: 1024px)", false],
@@ -138,19 +155,25 @@ describe("admin overview", () => {
 
     Object.defineProperty(window, "matchMedia", {
       configurable: true,
-      value: (query: string) => ({
-        addEventListener: (_event: string, listener: (event: MediaQueryListEvent) => void) => {
-          const queryListeners = listeners.get(query) ?? new Set()
-          queryListeners.add(listener)
-          listeners.set(query, queryListeners)
-        },
-        get matches() {
-          return matches.get(query) ?? false
-        },
-        media: query,
-        removeEventListener: (_event: string, listener: (event: MediaQueryListEvent) => void) =>
-          listeners.get(query)?.delete(listener),
-      }) as MediaQueryList,
+      value: (query: string) =>
+        ({
+          addEventListener: (
+            _event: string,
+            listener: (event: MediaQueryListEvent) => void
+          ) => {
+            const queryListeners = listeners.get(query) ?? new Set()
+            queryListeners.add(listener)
+            listeners.set(query, queryListeners)
+          },
+          get matches() {
+            return matches.get(query) ?? false
+          },
+          media: query,
+          removeEventListener: (
+            _event: string,
+            listener: (event: MediaQueryListEvent) => void
+          ) => listeners.get(query)?.delete(listener),
+        }) as MediaQueryList,
     })
 
     try {
@@ -167,7 +190,10 @@ describe("admin overview", () => {
         listeners.forEach((queryListeners, query) => {
           const queryMatches = matches.get(query) ?? false
           queryListeners.forEach((listener) =>
-            listener({ matches: queryMatches, media: query } as MediaQueryListEvent)
+            listener({
+              matches: queryMatches,
+              media: query,
+            } as MediaQueryListEvent)
           )
         })
       })

@@ -28,9 +28,9 @@ function Event({ event }: { event: InvestigationEvent }) {
       <span
         className={`mt-1.5 size-2 rounded-full ${event.actor === "operator" ? "bg-chart-1" : "bg-muted-foreground/50"}`}
       />
-      <div className="border-b border-border/70 pb-3">
+      <div className="border-b border-border/80 pb-4">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-          <strong className="text-sm">{event.title}</strong>
+          <strong className="text-sm font-semibold">{event.title}</strong>
           <span className="text-xs text-muted-foreground">
             {new Date(event.occurredAt).toLocaleString()}
           </span>
@@ -145,7 +145,9 @@ export function CustomerDetails({
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-lg font-semibold">{current.name}</p>
+          <p className="text-lg font-semibold tracking-[-0.01em]">
+            {current.name}
+          </p>
           <p className="text-sm text-muted-foreground">{current.email}</p>
         </div>
         <ActionMenu

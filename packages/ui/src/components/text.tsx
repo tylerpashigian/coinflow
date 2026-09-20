@@ -22,11 +22,11 @@ export interface TextProps {
   "data-testid"?: string
 }
 const sizes = {
-  xs: "text-xs leading-relaxed",
-  sm: "text-sm leading-loose",
-  md: "text-base leading-relaxed",
-  lg: "text-lg leading-snug",
-  xl: "text-2xl leading-tight",
+  xs: "text-xs leading-5",
+  sm: "text-sm leading-5",
+  md: "text-base leading-6",
+  lg: "text-lg leading-6",
+  xl: "text-2xl leading-8 tracking-[-0.02em]",
 }
 const weights = {
   regular: "font-normal",

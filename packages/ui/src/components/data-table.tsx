@@ -120,7 +120,9 @@ export function DataTable({
     const container = containerRef.current
     if (!container) return
     const updateOverflow = () =>
-      setHasHorizontalOverflow(container.scrollWidth > container.clientWidth + 1)
+      setHasHorizontalOverflow(
+        container.scrollWidth > container.clientWidth + 1
+      )
     updateOverflow()
     const observer =
       typeof ResizeObserver === "undefined"
@@ -136,7 +138,7 @@ export function DataTable({
   return (
     <div
       ref={containerRef}
-      className="relative w-full overflow-x-auto rounded-xl border border-border bg-card shadow-sm"
+      className="relative w-full overflow-x-auto rounded-xl border border-border bg-card"
       data-testid={testId}
     >
       <table
@@ -144,7 +146,7 @@ export function DataTable({
         aria-describedby={hasHorizontalOverflow ? overflowHintId : undefined}
         className="w-full caption-bottom text-sm"
       >
-        <thead className="border-b bg-muted/35">
+        <thead className="border-b border-border bg-muted/45">
           <tr>
             {selection !== "none" && (
               <th scope="col" className="px-4">
@@ -163,8 +165,9 @@ export function DataTable({
                       : "none"
                 }
                 className={cn(
-                  "h-11 px-4 text-[0.6875rem] font-semibold whitespace-nowrap text-muted-foreground",
-                  pinLeadingColumn && index === 0 &&
+                  "h-11 px-4 text-[0.6875rem] font-semibold tracking-wide whitespace-nowrap text-muted-foreground",
+                  pinLeadingColumn &&
+                    index === 0 &&
                     "sticky left-0 z-20 border-r border-border/70 bg-muted",
                   column.align === "right"
                     ? "text-right"
@@ -220,10 +223,11 @@ export function DataTable({
                   }
                 }}
                 className={cn(
-                  "border-b border-border/70 transition-colors last:border-0 hover:bg-muted/65 focus-visible:outline-2 focus-visible:outline-ring",
+                  "border-b border-border/80 transition-colors last:border-0 hover:bg-muted/70 focus-visible:outline-2 focus-visible:outline-ring",
                   onRowActivate && !row.disabled && "cursor-pointer",
                   selected.includes(row.id) && "bg-muted",
-                  activeRowId === row.id && "bg-accent text-accent-foreground",
+                  activeRowId === row.id &&
+                    "bg-accent text-accent-foreground ring-1 ring-ring/30 ring-inset",
                   row.disabled && "opacity-50"
                 )}
               >
@@ -245,7 +249,7 @@ export function DataTable({
                     key={column.id}
                     className={cn(
                       "px-4 align-middle whitespace-nowrap",
-                      density === "compact" ? "py-2" : "py-3",
+                      density === "compact" ? "py-2.5" : "py-3.5",
                       pinLeadingColumn &&
                         index === 0 &&
                         "sticky left-0 z-10 border-r border-border/70",
@@ -288,7 +292,7 @@ export function DataTable({
       </table>
       {hasHorizontalOverflow && (
         <p
-          className="sticky left-0 border-t border-border/70 bg-card px-4 py-2 text-xs text-muted-foreground"
+          className="sticky left-0 border-t border-border/80 bg-muted/45 px-4 py-2.5 text-xs text-muted-foreground"
           id={overflowHintId}
         >
           {overflowHint}

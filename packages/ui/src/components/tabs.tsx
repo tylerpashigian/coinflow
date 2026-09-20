@@ -49,7 +49,7 @@ export function Tabs({
         (item) =>
           item.content !== undefined && (
             <P.TabsContent key={item.value} value={item.value}>
-              <div className="mt-4 space-y-2">{item.content}</div>
+              <div className="mt-5 space-y-2">{item.content}</div>
             </P.TabsContent>
           )
       )}

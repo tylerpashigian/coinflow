@@ -24,7 +24,7 @@ export function KeyValueList({
   return (
     <section
       data-testid={testId}
-      className="rounded-xl border border-border/80 bg-card p-4 text-card-foreground"
+      className="rounded-xl border border-border bg-card p-4 text-card-foreground"
     >
       <div className="mb-3">
         <Text role="heading" headingLevel={3} weight="semibold">
@@ -36,10 +36,10 @@ export function KeyValueList({
           </Text>
         )}
       </div>
-      <dl className="divide-y divide-border/70">
+      <dl className="divide-y divide-border/80">
         {items.map((item) => (
           <div
-            className="flex items-baseline justify-between gap-5 py-2 first:pt-0 last:pb-0"
+            className="flex items-baseline justify-between gap-5 py-2.5 first:pt-0 last:pb-0"
             key={`${item.label}-${item.value}`}
           >
             <dt className="text-sm text-muted-foreground">{item.label}</dt>

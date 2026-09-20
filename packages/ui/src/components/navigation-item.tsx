@@ -27,10 +27,9 @@ export function NavigationItem({
       tabIndex={disabled || !href ? -1 : undefined}
       data-testid={testId}
       className={cn(
-        "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground",
-        current &&
-          "bg-accent font-semibold text-foreground dark:text-accent-foreground",
-        (disabled || !href) && "pointer-events-none opacity-50"
+        "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
+        current && "bg-accent font-semibold text-accent-foreground",
+        (disabled || !href) && "pointer-events-none opacity-55"
       )}
       onClick={(event) => {
         if (disabled || !href) {

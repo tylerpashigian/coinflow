@@ -48,7 +48,12 @@ function tableRow(row: Payment): TableRowData {
       { text: String(row.customerName) },
       {
         text: formatSentence(row.status),
-        badge: row.status === "settled" ? "success" : "destructive",
+        badge:
+          row.status === "settled"
+            ? "success"
+            : row.status === "refunded"
+              ? "info"
+              : "destructive",
       },
       {
         text: formatSentence(row.protection),
@@ -102,9 +107,9 @@ export function PurchasesPage({
   )
 
   return (
-    <section className="mx-auto max-w-[112rem] p-5 md:p-9">
-      <header className="mb-5 grid gap-5 border-b border-border/80 pb-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-        <div className="min-w-0">
+    <section className="mx-auto max-w-[112rem] p-6 md:p-10">
+      <header className="mb-7 grid gap-6 border-b border-border pb-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="min-w-0 space-y-1">
           <Text role="heading" headingLevel={2} variant="heading">
             Purchases
           </Text>
@@ -118,7 +123,7 @@ export function PurchasesPage({
             {`Showing ${filteredPayments.length} payment records`}
           </Text>
         </div>
-        <div className="w-full sm:w-auto">
+        <div className="w-full sm:w-auto lg:pb-0.5">
           <FormField label="Purchase date range" labelVisuallyHidden>
             <DateRangePicker
               defaultMonth={latestPaymentDate}

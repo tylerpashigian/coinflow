@@ -82,7 +82,7 @@ function NavigationContent({
           Coinflow
         </Text>
       </div>
-      <div className="mt-9">
+      <div className="mt-8">
         <FormField label="Merchant ID">
           <Select
             defaultValue="Coinflow Admin"
@@ -107,7 +107,7 @@ function NavigationContent({
           />
         </FormField>
       </div>
-      <nav aria-label="Primary" className="mt-7 flex min-h-0 flex-1 flex-col">
+      <nav aria-label="Primary" className="mt-8 flex min-h-0 flex-1 flex-col">
         <div className="shrink-0 space-y-1">
           {primaryNavigation.map((item) => (
             <NavigationItem
@@ -117,7 +117,7 @@ function NavigationContent({
             />
           ))}
         </div>
-        <div className="mt-6 flex min-h-0 flex-1 flex-col">
+        <div className="mt-7 flex min-h-0 flex-1 flex-col">
           <div className="mb-2 shrink-0 px-3">
             <Text
               role="paragraph"
@@ -141,7 +141,7 @@ function NavigationContent({
           </div>
         </div>
       </nav>
-      <div className="mt-5 flex shrink-0 items-center gap-3 border-t border-border px-3 pt-5 dark:border-border">
+      <div className="mt-6 flex shrink-0 items-center gap-3 border-t border-border px-3 pt-5 dark:border-border">
         <div className="grid size-8 place-items-center rounded-full bg-accent text-sm font-semibold text-accent-foreground">
           {user.status === "ready" ? user.user.name.slice(0, 1) : "B"}
         </div>
@@ -191,7 +191,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-svh bg-muted/45 dark:bg-background">
-      <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-border bg-background/95 px-4 backdrop-blur-sm lg:hidden dark:bg-card/95">
+      <header className="sticky top-0 z-40 flex h-15 items-center gap-3 border-b border-border bg-background/95 px-5 backdrop-blur-sm lg:hidden dark:bg-card/95">
         <Drawer
           title="Navigation"
           placement="navigation"
@@ -214,7 +214,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           {pageTitle(pathname)}
         </Text>
       </header>
-      <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-border bg-background px-4 py-6 lg:flex lg:flex-col dark:bg-card">
+      <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-border bg-background px-5 py-7 lg:flex lg:flex-col dark:bg-card">
         <NavigationContent searchRef={desktopSearchRef} user={user} />
       </aside>
       <main className="lg:pl-72">{children}</main>

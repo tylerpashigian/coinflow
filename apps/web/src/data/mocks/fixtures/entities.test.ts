@@ -9,11 +9,13 @@ describe("operations mock fixtures", () => {
     expect(payments.length).toBeLessThanOrEqual(20)
 
     const customerIds = new Set(customers.map((customer) => customer.id))
-    expect(payments.every((payment) => customerIds.has(payment.customerId))).toBe(
-      true
-    )
     expect(
-      payments.every((payment) => payment.transactionReference.startsWith("txn_"))
+      payments.every((payment) => customerIds.has(payment.customerId))
+    ).toBe(true)
+    expect(
+      payments.every((payment) =>
+        payment.transactionReference.startsWith("txn_")
+      )
     ).toBe(true)
   })
 })

@@ -92,9 +92,9 @@ export function DashboardPage() {
   ]
 
   return (
-    <section className="mx-auto max-w-[96rem] p-5 md:p-9">
-      <div className="mb-8 flex flex-col justify-between gap-5 border-b border-border/80 pb-7 md:flex-row md:items-end">
-        <div>
+    <section className="mx-auto max-w-[96rem] p-6 md:p-10">
+      <div className="mb-8 flex flex-col justify-between gap-6 border-b border-border pb-8 md:flex-row md:items-end">
+        <div className="max-w-2xl">
           <Text role="heading" headingLevel={2} variant="heading">
             Operator overview
           </Text>
@@ -102,7 +102,7 @@ export function DashboardPage() {
             Settlement activity and customer movement across every merchant.
           </Text>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
           <Select
             aria-label="Date range"
             value={range}
@@ -127,7 +127,7 @@ export function DashboardPage() {
           ></Tabs>
         </div>
       </div>
-      <div className="grid gap-3 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3">
         <SummaryCard
           label="Payments"
           value={formatCurrency(data.summaries.payments)}
@@ -149,7 +149,7 @@ export function DashboardPage() {
           detail={data.rangeLabel}
         />
       </div>
-      <div className="mt-7">
+      <div className="mt-8">
         <ActivityChart
           domain={domain}
           metric={metric}
@@ -202,7 +202,7 @@ function ActivityChart({
 }) {
   return (
     <Card density="spacious">
-      <div className="flex flex-col gap-5 border-b border-border/70 pb-5 md:flex-row md:items-start md:justify-between">
+      <div className="flex flex-col gap-5 border-b border-border/80 pb-6 md:flex-row md:items-start md:justify-between">
         <div className="space-y-1">
           <Text role="heading" headingLevel={3} weight="semibold">
             {domain === "payments" ? "Payment activity" : "Payout activity"}
@@ -224,9 +224,11 @@ function ActivityChart({
           }}
         />
       </div>
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
+      <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <Text tone="muted">{metric === "amount" ? "Settled volume" : "Settled transactions"}</Text>
+          <Text tone="muted">
+            {metric === "amount" ? "Settled volume" : "Settled transactions"}
+          </Text>
           <Text size="xl" weight="semibold">
             {total}
           </Text>
@@ -243,7 +245,7 @@ function ActivityChart({
           }}
         />
       </div>
-      <div className="mt-6 min-h-80">
+      <div className="mt-7 min-h-80">
         <LineChart
           ariaLabel={`${domain} ${metric} activity trend`}
           series={series}

@@ -170,7 +170,7 @@ function DrawerHeader({
     <div
       data-slot="drawer-header"
       className={cn(
-        "flex shrink-0 flex-col gap-1 p-4 pb-0 group-data-[swipe-axis=y]/drawer-popup:text-center md:text-left",
+        "flex shrink-0 flex-col gap-1 p-5 pb-0 group-data-[swipe-axis=y]/drawer-popup:text-center md:text-left",
         visuallyHidden && "sr-only"
       )}
       {...props}
@@ -193,7 +193,7 @@ function DrawerTitle({ className, ...props }: DrawerPrimitive.Title.Props) {
     <DrawerPrimitive.Title
       data-slot="drawer-title"
       className={cn(
-        "font-heading text-sm font-medium text-foreground",
+        "font-heading text-xl leading-7 font-semibold tracking-[-0.01em] text-foreground",
         className
       )}
       {...props}
@@ -209,7 +209,7 @@ function DrawerDescription({
     <DrawerPrimitive.Description
       data-slot="drawer-description"
       className={cn(
-        "text-xs/relaxed text-balance text-muted-foreground",
+        "text-sm leading-5 text-balance text-muted-foreground",
         className
       )}
       {...props}

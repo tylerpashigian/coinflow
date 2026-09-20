@@ -35,13 +35,13 @@ export function Card({
     <div
       data-testid={testId}
       className={cn(
-        "rounded-xl border border-border/80 bg-card text-card-foreground shadow-sm",
+        "rounded-xl border border-border bg-card text-card-foreground",
         density === "compact" ? "p-4" : density === "spacious" ? "p-6" : "p-5"
       )}
     >
       {variant === "metric" ? (
         <div className="flex items-start justify-between gap-4">
-          <div className="space-y-2">
+          <div className="min-w-0 space-y-2">
             <Text tone="muted">{title ?? ""}</Text>
             <Text size="xl" weight="semibold">
               {summary ?? ""}
@@ -55,7 +55,7 @@ export function Card({
         </div>
       ) : variant === "record" ? (
         <div className="space-y-2">
-          <Text size="xl" weight="semibold">
+          <Text size="lg" weight="semibold">
             {summary ?? ""}
           </Text>
           {description && <Text tone="muted">{description}</Text>}
@@ -84,16 +84,16 @@ export function Card({
         )
       )}
       {details && (
-        <dl className="mt-2 space-y-2">
+        <dl className="mt-3 space-y-1">
           {details.map((detail) => (
             <div
               key={detail.label}
               className="flex items-center justify-between gap-3"
             >
-              <dt className="text-sm leading-loose text-muted-foreground">
+              <dt className="text-sm leading-5 text-muted-foreground">
                 {detail.label}
               </dt>
-              <dd className="text-right text-sm leading-loose font-medium">
+              <dd className="text-right text-sm leading-5 font-medium">
                 {detail.value}
               </dd>
             </div>
@@ -101,7 +101,7 @@ export function Card({
         </dl>
       )}
       {children && (
-        <div className={cn((title || description || summary) && "mt-5")}>
+        <div className={cn((title || description || summary) && "mt-4")}>
           {children}
         </div>
       )}

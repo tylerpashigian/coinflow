@@ -40,9 +40,15 @@ export async function getPayment(id: string): Promise<Payment> {
 }
 
 async function mutatePayment(id: string, action: "refund" | "fraud-report") {
-  const response = await fetch(`/api/payments/${id}/${action}`, { method: "POST" })
-  if (!response.ok) throw new Error(`Unable to ${action === "refund" ? "refund payment" : "report payment"}`)
+  const response = await fetch(`/api/payments/${id}/${action}`, {
+    method: "POST",
+  })
+  if (!response.ok)
+    throw new Error(
+      `Unable to ${action === "refund" ? "refund payment" : "report payment"}`
+    )
   return parsePaymentResponse(response)
 }
 export const refundPayment = (id: string) => mutatePayment(id, "refund")
-export const reportPaymentFraud = (id: string) => mutatePayment(id, "fraud-report")
+export const reportPaymentFraud = (id: string) =>
+  mutatePayment(id, "fraud-report")

@@ -20,8 +20,20 @@ const knownCustomers: Customer[] = [
     verification: "enforced",
     methods: [{ type: "Card", brand: "Visa", last4: "4242" }],
     activities: [
-      { id: "evt_nova_payment", type: "payment", title: "Payment settled", occurredAt: "2026-08-30T15:50:00Z", actor: "system" },
-      { id: "evt_nova_created", type: "customer", title: "Customer created", occurredAt: "2026-08-29T13:45:00Z", actor: "system" },
+      {
+        id: "evt_nova_payment",
+        type: "payment",
+        title: "Payment settled",
+        occurredAt: "2026-08-30T15:50:00Z",
+        actor: "system",
+      },
+      {
+        id: "evt_nova_created",
+        type: "customer",
+        title: "Customer created",
+        occurredAt: "2026-08-29T13:45:00Z",
+        actor: "system",
+      },
     ],
   }).build(),
   customerBuilder({
@@ -37,7 +49,13 @@ const knownCustomers: Customer[] = [
     verification: "not_found",
     methods: [{ type: "Card", brand: "Mastercard", last4: "4444" }],
     activities: [
-      { id: "evt_milo_created", type: "customer", title: "Customer created", occurredAt: "2026-08-25T10:12:00Z", actor: "system" },
+      {
+        id: "evt_milo_created",
+        type: "customer",
+        title: "Customer created",
+        occurredAt: "2026-08-25T10:12:00Z",
+        actor: "system",
+      },
     ],
   }).build(),
 ]

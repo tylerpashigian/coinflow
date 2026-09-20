@@ -57,7 +57,12 @@ function tableRow(row: Customer): TableRowData {
       { text: String(row.attemptLimit), sortValue: row.attemptLimit },
       {
         text: formatSentence(row.verification),
-        badge: row.verification === "enforced" ? "success" : "info",
+        badge:
+          row.verification === "enforced"
+            ? "success"
+            : row.verification === "pending"
+              ? "warning"
+              : "outline",
       },
     ],
   }
@@ -98,9 +103,9 @@ export function CustomersPage({
   )
 
   return (
-    <section className="mx-auto max-w-[112rem] p-5 md:p-9">
-      <header className="mb-5 grid gap-5 border-b border-border/80 pb-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-        <div className="min-w-0">
+    <section className="mx-auto max-w-[112rem] p-6 md:p-10">
+      <header className="mb-7 grid gap-6 border-b border-border pb-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="min-w-0 space-y-1">
           <Text role="heading" headingLevel={2} variant="heading">
             Customers
           </Text>
@@ -111,7 +116,7 @@ export function CustomersPage({
             {`Showing ${filteredCustomers.length} customer records`}
           </Text>
         </div>
-        <div className="w-full sm:w-auto">
+        <div className="w-full sm:w-auto lg:pb-0.5">
           <FormField label="Customer date range" labelVisuallyHidden>
             <DateRangePicker
               defaultMonth={latestCustomerDate}
